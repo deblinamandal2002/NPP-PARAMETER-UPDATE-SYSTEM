@@ -24,7 +24,7 @@ This is a **comprehensive internship project** that successfully delivered a com
 
 ---
 
-## EXECUTIVE SUMMARY
+##  SUMMARY
 
 Imagine a nuclear power facility where every heartbeat of the reactor is monitored in real-time, where every one of 100+ workstations reports its health status automatically, and where potential failures are predicted days before they occur. The **Nuclear Power Plant Integrated Operations System (NPP-IOS)** transforms traditional facility management from reactive fire-fighting into **proactive, predictive, intelligent operations**.
 
@@ -38,10 +38,10 @@ This isn't just another monitoring system—it's a **comprehensive digital nervo
 nuclear-system/ (Deblina Mandal - Internship Project)
 │
 ├── 📄 CORE DOCUMENTATION
-│   ├── README.md (6 months ago - Updated)
-│   ├── OVERVIEW.pdf.pdf (2 years ago)
-│   ├── Appdesign.pdf (2 years ago)
-│   ├── Webdesign.pdf (2 years ago)
+│   ├── README.md 
+│   ├── OVERVIEW.pdf.pdf 
+│   ├── Appdesign.pdf 
+│   ├── Webdesign.pdf 
 │   └── docs/
 │       ├── architecture.pdf
 │       ├── system_overview.pdf
@@ -51,7 +51,7 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 │       └── First-Response-Protocol.md
 │
 ├── 🎨 DASHBOARDS & USER INTERFACES
-│   ├── index.html (Updated & renamed from NPP.html - 6 months ago)
+│   ├── index.html 
 │   ├── dashboard.html
 │   ├── dashboard.css
 │   ├── scriptdash.js
@@ -66,14 +66,14 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 │   ├── network-diagnostics.html (NEW)
 │   ├── diagnostics.css (NEW)
 │   │
-│   ├── bgpage.html (Updated - 5 months ago)
+│   ├── bgpage.html 
 │   ├── bgpage.css
 │   │
-│   ├── Webdesign.html (2 years ago)
+│   ├── Webdesign.html 
 │   ├── webdesign.css
 │   ├── webd.js
 │   │
-│   ├── Appdesign.html (2 years ago)
+│   ├── Appdesign.html 
 │   ├── appdes.css
 │   └── app.js
 │
