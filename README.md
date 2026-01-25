@@ -59,12 +59,12 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 │   ├── monitoring.html
 │   ├── safety.html
 │   │
-│   ├── infrastructure-dashboard.html (NEW)
-│   ├── infrastructure.css (NEW)
+│   ├── infrastructure-dashboard.html 
+│   ├── infrastructure.css 
 │   │
-│   ├── workstation-health.html (NEW)
-│   ├── network-diagnostics.html (NEW)
-│   ├── diagnostics.css (NEW)
+│   ├── workstation-health.html 
+│   ├── network-diagnostics.html 
+│   ├── diagnostics.css 
 │   │
 │   ├── bgpage.html 
 │   ├── bgpage.css
@@ -118,7 +118,7 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 │   ├── printable.css
 │   ├── insert.html
 │   │
-│   ├── POWERBI.html (5 months ago - Updated)
+│   ├── POWERBI.html 
 │   │   └── [Power BI Integration & Analytics]
 │   │
 │   └── acct.css
@@ -525,7 +525,7 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 
 ### HTML Files (23 total)
 **Main Dashboards:**
-- ✅ `index.html` - Main entry point (Updated 6 months ago)
+- ✅ `index.html` - Main entry point 
 - ✅ `dashboard.html` - Primary dashboard
 - ✅ `monitoring.html` - Reactor monitoring
 - ✅ `safety.html` - Nuclear safety operations
@@ -536,7 +536,7 @@ nuclear-system/ (Deblina Mandal - Internship Project)
 **Design & Web:**
 - ✅ `Webdesign.html` - Web design interface
 - ✅ `Appdesign.html` - Application design interface
-- ✅ `bgpage.html` - Background/page design (Updated 5 months ago)
+- ✅ `bgpage.html` - Background/page design 
 
 **Security & Access:**
 - ✅ `alarm.html` - Alarm management
