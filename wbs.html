@@ -1,0 +1,804 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --npp-bg: var(--color-background-tertiary);
+    --npp-panel: var(--color-background-secondary);
+    --npp-card: var(--color-background-primary);
+    --npp-border: var(--color-border-tertiary);
+    --npp-border2: var(--color-border-secondary);
+    --npp-text: var(--color-text-primary);
+    --npp-muted: var(--color-text-secondary);
+    --npp-accent: #1D9E75;
+    --npp-warn: #BA7517;
+    --npp-danger: #A32D2D;
+    --npp-info: #185FA5;
+    --npp-mono: 'Share Tech Mono', monospace;
+    --npp-ui: 'Rajdhani', sans-serif;
+  }
+
+  .npp-root {
+    font-family: var(--npp-ui);
+    background: var(--npp-bg);
+    color: var(--npp-text);
+    padding: 12px;
+    min-height: 100vh;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .reactor-icon {
+    width: 32px; height: 32px;
+    background: var(--npp-accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .reactor-icon svg { width: 18px; height: 18px; }
+  .topbar h1 { font-size: 15px; font-weight: 600; letter-spacing: 0.04em; }
+  .topbar-sub { font-size: 11px; color: var(--npp-muted); font-family: var(--npp-mono); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .status-pill {
+    font-size: 11px; font-family: var(--npp-mono);
+    padding: 3px 10px; border-radius: 20px;
+    background: #E1F5EE; color: #0F6E56;
+    border: 0.5px solid #5DCAA5;
+    animation: pulse-pill 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse-pill { 0%,100%{opacity:1} 50%{opacity:.7} }
+  .topbar-time { font-size: 12px; font-family: var(--npp-mono); color: var(--npp-muted); }
+
+  /* MAIN LAYOUT: 3 columns */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr 220px;
+    gap: 10px;
+    align-items: start;
+  }
+
+  /* ── WBS COLUMN ── */
+  .wbs-col {
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .wbs-header {
+    background: var(--npp-accent);
+    padding: 8px 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .wbs-header span { font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.05em; }
+  .wbs-header-badge {
+    margin-left: auto; font-size: 10px; font-family: var(--npp-mono);
+    background: rgba(255,255,255,0.2); color: #fff;
+    padding: 1px 6px; border-radius: 10px;
+  }
+
+  .wbs-tree { padding: 8px 0; }
+  .wbs-level0 {
+    padding: 5px 12px 5px 12px;
+    font-size: 11px; font-weight: 600;
+    color: var(--npp-muted); letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 0.5px solid var(--npp-border);
+    margin-bottom: 2px;
+  }
+  .wbs-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 12px 4px 16px;
+    font-size: 12px; cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    line-height: 1.3;
+  }
+  .wbs-item:hover { background: var(--color-background-secondary); }
+  .wbs-item.active { border-left-color: var(--npp-accent); background: var(--color-background-secondary); }
+  .wbs-item.active .wbs-label { color: var(--npp-accent); font-weight: 600; }
+  .wbs-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .wbs-code { font-family: var(--npp-mono); font-size: 10px; color: var(--npp-muted); min-width: 32px; }
+  .wbs-label { font-size: 12px; color: var(--npp-text); flex: 1; }
+  .wbs-badge {
+    font-size: 9px; font-family: var(--npp-mono);
+    padding: 1px 5px; border-radius: 8px; flex-shrink: 0;
+  }
+  .badge-ok { background: #E1F5EE; color: #0F6E56; }
+  .badge-warn { background: #FAEEDA; color: #854F0B; }
+  .badge-crit { background: #FCEBEB; color: #A32D2D; }
+  .badge-info { background: #E6F1FB; color: #185FA5; }
+
+  .wbs-sub {
+    padding: 3px 12px 3px 28px;
+    font-size: 11px; color: var(--npp-muted);
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+  }
+  .wbs-sub:hover { color: var(--npp-text); }
+  .wbs-sub::before { content: '└'; font-size: 10px; opacity: 0.4; }
+
+  .wbs-divider { height: 1px; background: var(--npp-border); margin: 4px 0; }
+
+  /* ── CENTER COLUMN ── */
+  .center-col { display: flex; flex-direction: column; gap: 10px; }
+
+  /* Param cards grid */
+  .param-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .param-card {
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .param-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .param-card.ok::before { background: var(--npp-accent); }
+  .param-card.warn::before { background: var(--npp-warn); }
+  .param-card.crit::before { background: var(--npp-danger); }
+  .param-card.info::before { background: var(--npp-info); }
+
+  .param-name { font-size: 10px; color: var(--npp-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .param-val { font-size: 22px; font-weight: 600; font-family: var(--npp-mono); line-height: 1; }
+  .param-val.ok { color: var(--npp-accent); }
+  .param-val.warn { color: var(--npp-warn); }
+  .param-val.crit { color: var(--npp-danger); }
+  .param-val.info { color: var(--npp-info); }
+  .param-unit { font-size: 11px; color: var(--npp-muted); margin-top: 2px; }
+  .param-range { font-size: 10px; color: var(--npp-muted); font-family: var(--npp-mono); margin-top: 6px; }
+  .param-bar { height: 3px; background: var(--npp-border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .param-fill { height: 100%; border-radius: 2px; }
+
+  /* Update form */
+  .update-panel {
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 8px 12px;
+    border-bottom: 0.5px solid var(--npp-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-header h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; }
+  .panel-tag { font-size: 10px; font-family: var(--npp-mono); color: var(--npp-muted); }
+  .panel-body { padding: 12px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .form-group { display: flex; flex-direction: column; gap: 3px; }
+  .form-group label { font-size: 10px; color: var(--npp-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .form-group select, .form-group input {
+    font-family: var(--npp-mono); font-size: 12px;
+    background: var(--npp-panel);
+    border: 0.5px solid var(--npp-border2);
+    border-radius: 4px;
+    padding: 5px 8px;
+    color: var(--npp-text);
+    outline: none;
+  }
+  .form-group select:focus, .form-group input:focus {
+    border-color: var(--npp-accent);
+  }
+  .form-group textarea {
+    font-family: var(--npp-mono); font-size: 11px;
+    background: var(--npp-panel);
+    border: 0.5px solid var(--npp-border2);
+    border-radius: 4px;
+    padding: 5px 8px;
+    color: var(--npp-text);
+    outline: none; resize: none; width: 100%;
+  }
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn {
+    flex: 1; font-family: var(--npp-ui); font-size: 12px; font-weight: 600;
+    padding: 7px 12px; border-radius: 5px; cursor: pointer; border: 0.5px solid;
+    letter-spacing: 0.04em; transition: opacity 0.15s;
+  }
+  .btn:active { opacity: 0.8; }
+  .btn-primary { background: var(--npp-accent); color: #fff; border-color: #0F6E56; }
+  .btn-ghost { background: transparent; color: var(--npp-text); border-color: var(--npp-border2); }
+
+  /* Log table */
+  .log-panel {
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .log-table th {
+    text-align: left; padding: 6px 12px;
+    font-size: 10px; font-weight: 600; color: var(--npp-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border-bottom: 0.5px solid var(--npp-border);
+    background: var(--npp-panel);
+  }
+  .log-table td {
+    padding: 5px 12px;
+    border-bottom: 0.5px solid var(--npp-border);
+    font-family: var(--npp-mono); font-size: 11px;
+    vertical-align: middle;
+  }
+  .log-table tr:last-child td { border-bottom: none; }
+  .log-table tr:hover td { background: var(--npp-panel); }
+  .log-status { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+  .s-ok { background: var(--npp-accent); }
+  .s-warn { background: var(--npp-warn); }
+  .s-pend { background: var(--npp-info); }
+
+  /* ── RIGHT COLUMN ── */
+  .right-col { display: flex; flex-direction: column; gap: 10px; }
+
+  .mini-card {
+    background: var(--npp-card);
+    border: 0.5px solid var(--npp-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .mini-card h3 { font-size: 11px; font-weight: 600; color: var(--npp-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+
+  .gauge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .gauge-label { font-size: 11px; flex: 1; }
+  .gauge-bar-wrap { flex: 2; height: 4px; background: var(--npp-border); border-radius: 2px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 2px; }
+  .gauge-pct { font-family: var(--npp-mono); font-size: 10px; min-width: 30px; text-align: right; color: var(--npp-muted); }
+
+  .alarm-list { display: flex; flex-direction: column; gap: 5px; }
+  .alarm-item {
+    display: flex; align-items: flex-start; gap: 7px;
+    font-size: 11px; line-height: 1.4;
+    padding: 5px 7px; border-radius: 5px;
+  }
+  .alarm-item.crit { background: #FCEBEB; color: #501313; }
+  .alarm-item.warn { background: #FAEEDA; color: #412402; }
+  .alarm-item.info { background: #E6F1FB; color: #042C53; }
+  .alarm-icon { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+  .alarm-text { font-size: 11px; }
+  .alarm-time { font-family: var(--npp-mono); font-size: 9px; opacity: 0.6; display: block; }
+
+  .sched-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 0; border-bottom: 0.5px solid var(--npp-border);
+    font-size: 11px;
+  }
+  .sched-row:last-child { border-bottom: none; }
+  .sched-time { font-family: var(--npp-mono); font-size: 10px; color: var(--npp-muted); }
+  .sched-chip {
+    font-size: 9px; padding: 1px 6px; border-radius: 8px; font-family: var(--npp-mono);
+  }
+</style>
+
+<div class="npp-root">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="reactor-icon">
+        <svg viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="3.5" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="9" cy="9" r="7" stroke="#fff" stroke-width="0.8" stroke-dasharray="3 2"/>
+          <path d="M9 2v2M9 14v2M2 9h2M14 9h2" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="topbar h1" style="font-size:15px;font-weight:600;letter-spacing:0.04em">NPP Parameter Update System</div>
+        <div class="topbar-sub">NPCIL · Reactor Control & Monitoring Platform</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status-pill">● REACTOR ONLINE</span>
+      <span class="topbar-time" id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- MAIN 3-COL GRID -->
+  <div class="main-grid">
+
+    <!-- ════ WBS COLUMN ════ -->
+    <div class="wbs-col">
+      <div class="wbs-header">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="1" y="1" width="5" height="3" rx="1" stroke="#fff" stroke-width="1"/>
+          <rect x="1" y="6" width="5" height="3" rx="1" stroke="#fff" stroke-width="1"/>
+          <rect x="1" y="11" width="5" height="2" rx="1" stroke="#fff" stroke-width="1"/>
+          <path d="M6 2.5h2v9H6" stroke="#fff" stroke-width="1" fill="none"/>
+          <rect x="8" y="2" width="5" height="2" rx="1" stroke="#fff" stroke-width="1"/>
+          <rect x="8" y="6" width="5" height="2" rx="1" stroke="#fff" stroke-width="1"/>
+          <rect x="8" y="10" width="5" height="2" rx="1" stroke="#fff" stroke-width="1"/>
+        </svg>
+        <span>WBS Structure</span>
+        <span class="wbs-header-badge">v2.4</span>
+      </div>
+
+      <div class="wbs-tree">
+
+        <!-- 1. Core Documentation -->
+        <div class="wbs-level0">1 · Core Documentation</div>
+        <div class="wbs-item active" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">1.1</span>
+          <span class="wbs-label">System README</span>
+          <span class="wbs-badge badge-ok">Done</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">1.2</span>
+          <span class="wbs-label">Architecture Docs</span>
+          <span class="wbs-badge badge-ok">Done</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#BA7517"></span>
+          <span class="wbs-code">1.3</span>
+          <span class="wbs-label">IT Infrastructure</span>
+          <span class="wbs-badge badge-warn">Review</span>
+        </div>
+        <div class="wbs-sub">Network Troubleshooting</div>
+        <div class="wbs-sub">Diagnostics Procedures</div>
+        <div class="wbs-sub">First Response Protocol</div>
+
+        <div class="wbs-divider"></div>
+
+        <!-- 2. Dashboards & UI -->
+        <div class="wbs-level0">2 · Dashboards & UI</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">2.1</span>
+          <span class="wbs-label">Main Dashboard</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">2.2</span>
+          <span class="wbs-label">Monitoring Panel</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">2.3</span>
+          <span class="wbs-label">Infrastructure UI</span>
+          <span class="wbs-badge badge-info">Test</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">2.4</span>
+          <span class="wbs-label">Workstation Health</span>
+          <span class="wbs-badge badge-info">Test</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#BA7517"></span>
+          <span class="wbs-code">2.5</span>
+          <span class="wbs-label">App / Web Design</span>
+          <span class="wbs-badge badge-warn">WIP</span>
+        </div>
+
+        <div class="wbs-divider"></div>
+
+        <!-- 3. Security -->
+        <div class="wbs-level0">3 · Security & Access</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">3.1</span>
+          <span class="wbs-label">Alarm System</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">3.2</span>
+          <span class="wbs-label">Access Control</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#BA7517"></span>
+          <span class="wbs-code">3.3</span>
+          <span class="wbs-label">Cybersecurity Protocol</span>
+          <span class="wbs-badge badge-warn">Review</span>
+        </div>
+
+        <div class="wbs-divider"></div>
+
+        <!-- 4. Backend Modules -->
+        <div class="wbs-level0">4 · Backend Modules</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">4.1</span>
+          <span class="wbs-label">Reactor Monitor</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">4.2</span>
+          <span class="wbs-label">Safety Protocols</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">4.3</span>
+          <span class="wbs-label">Infrastructure Mod.</span>
+          <span class="wbs-badge badge-info">New</span>
+        </div>
+        <div class="wbs-sub">NetworkMonitor</div>
+        <div class="wbs-sub">HardwareDiagnostics</div>
+        <div class="wbs-sub">CybersecurityProtocol</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">4.4</span>
+          <span class="wbs-label">Diagnostics Mod.</span>
+          <span class="wbs-badge badge-info">New</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">4.5</span>
+          <span class="wbs-label">Maintenance Mod.</span>
+          <span class="wbs-badge badge-info">New</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">4.6</span>
+          <span class="wbs-label">Communication</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+
+        <div class="wbs-divider"></div>
+
+        <!-- 5. Reporting -->
+        <div class="wbs-level0">5 · Management & Reports</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">5.1</span>
+          <span class="wbs-label">Power BI Analytics</span>
+          <span class="wbs-badge badge-ok">Live</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#BA7517"></span>
+          <span class="wbs-code">5.2</span>
+          <span class="wbs-label">Print / Export</span>
+          <span class="wbs-badge badge-warn">WIP</span>
+        </div>
+
+        <div class="wbs-divider"></div>
+
+        <!-- 6. Testing -->
+        <div class="wbs-level0">6 · Testing & Validation</div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#185FA5"></span>
+          <span class="wbs-code">6.1</span>
+          <span class="wbs-label">Unit / Integration</span>
+          <span class="wbs-badge badge-info">Run</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#A32D2D"></span>
+          <span class="wbs-code">6.2</span>
+          <span class="wbs-label">Safety Tests</span>
+          <span class="wbs-badge badge-crit">Pend</span>
+        </div>
+        <div class="wbs-item" onclick="setWBS(this)">
+          <span class="wbs-dot" style="background:#1D9E75"></span>
+          <span class="wbs-code">6.3</span>
+          <span class="wbs-label">Security Audit</span>
+          <span class="wbs-badge badge-ok">Done</span>
+        </div>
+        <div style="padding:8px 12px;font-size:10px;color:var(--npp-muted);font-family:var(--npp-mono);border-top:0.5px solid var(--npp-border);margin-top:4px">
+          Deblina Mandal · Internship Project
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ CENTER COLUMN ════ -->
+    <div class="center-col">
+
+      <!-- Live Parameters -->
+      <div class="param-grid">
+        <div class="param-card ok">
+          <div class="param-name">Core Temp</div>
+          <div class="param-val ok" id="temp">287.4</div>
+          <div class="param-unit">°C · Normal Range</div>
+          <div class="param-range">Limit: 280–300°C</div>
+          <div class="param-bar"><div class="param-fill" style="width:62%;background:#1D9E75"></div></div>
+        </div>
+        <div class="param-card warn">
+          <div class="param-name">Coolant Pressure</div>
+          <div class="param-val warn" id="pressure">15.82</div>
+          <div class="param-unit">MPa · Caution</div>
+          <div class="param-range">Limit: 14.0–16.0 MPa</div>
+          <div class="param-bar"><div class="param-fill" style="width:91%;background:#BA7517"></div></div>
+        </div>
+        <div class="param-card ok">
+          <div class="param-name">Neutron Flux</div>
+          <div class="param-val ok" id="flux">3.21</div>
+          <div class="param-unit">×10¹³ n/cm²/s</div>
+          <div class="param-range">Nominal: 2.8–3.5</div>
+          <div class="param-bar"><div class="param-fill" style="width:55%;background:#1D9E75"></div></div>
+        </div>
+        <div class="param-card info">
+          <div class="param-name">Containment Rad.</div>
+          <div class="param-val info" id="rad">0.012</div>
+          <div class="param-unit">mSv/hr · Monitoring</div>
+          <div class="param-range">Alert: >0.05 mSv/hr</div>
+          <div class="param-bar"><div class="param-fill" style="width:24%;background:#185FA5"></div></div>
+        </div>
+      </div>
+
+      <!-- Parameter Update Form -->
+      <div class="update-panel">
+        <div class="panel-header">
+          <h2>PARAMETER UPDATE REQUEST</h2>
+          <span class="panel-tag">npp_para.html · Form v3.1</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>System Module (WBS)</label>
+              <select id="wbs-select">
+                <option>4.1 – Reactor Monitor</option>
+                <option>4.2 – Safety Protocols</option>
+                <option>3.1 – Alarm System</option>
+                <option>2.1 – Main Dashboard</option>
+                <option>4.3 – Infrastructure</option>
+                <option>4.4 – Diagnostics</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Parameter ID</label>
+              <input type="text" value="RPT-CORE-TEMP-01" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Current Value</label>
+              <input type="text" value="287.4 °C" />
+            </div>
+            <div class="form-group">
+              <label>Proposed Value</label>
+              <input type="text" placeholder="Enter new value..." />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Change Authority</label>
+              <select>
+                <option>Level 1 – Operator</option>
+                <option>Level 2 – Supervisor</option>
+                <option>Level 3 – Chief Engineer</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Priority</label>
+              <select>
+                <option>Routine</option>
+                <option>Scheduled</option>
+                <option>Urgent</option>
+                <option>Emergency</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Justification / Remarks</label>
+            <textarea rows="2" placeholder="State reason for parameter update..."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost">Clear</button>
+            <button class="btn btn-primary">Submit Update Request ↗</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Log -->
+      <div class="log-panel">
+        <div class="panel-header">
+          <h2>RECENT PARAMETER UPDATES</h2>
+          <span class="panel-tag">Last 24 hrs</span>
+        </div>
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Timestamp</th>
+              <th>WBS</th>
+              <th>Parameter</th>
+              <th>Old → New</th>
+              <th>By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="log-status s-ok"></span></td>
+              <td>08:42:17</td><td>4.1</td><td>COOLANT-FLOW-02</td><td>412 → 418 m³/h</td><td>Sharma R.</td>
+            </tr>
+            <tr>
+              <td><span class="log-status s-warn"></span></td>
+              <td>07:15:03</td><td>3.1</td><td>ALARM-THRESH-P1</td><td>15.5 → 15.8 MPa</td><td>Nair K.</td>
+            </tr>
+            <tr>
+              <td><span class="log-status s-ok"></span></td>
+              <td>06:30:44</td><td>4.2</td><td>SCRAM-DELAY-T</td><td>0.8 → 0.75 s</td><td>Rao D.</td>
+            </tr>
+            <tr>
+              <td><span class="log-status s-pend"></span></td>
+              <td>05:55:12</td><td>4.4</td><td>DIAG-POLL-INTV</td><td>30 → 15 s</td><td>Mandal D.</td>
+            </tr>
+            <tr>
+              <td><span class="log-status s-ok"></span></td>
+              <td>04:10:28</td><td>5.1</td><td>REPORT-CYCLE</td><td>60 → 30 min</td><td>Singh A.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ RIGHT COLUMN ════ -->
+    <div class="right-col">
+
+      <!-- System Health -->
+      <div class="mini-card">
+        <h3>System Health</h3>
+        <div class="gauge-row">
+          <span class="gauge-label">Reactor Core</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:94%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">94%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label">Cooling Loop</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:88%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">88%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label">Safety Net</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:100%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">100%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label">Network / LAN</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:76%;background:#BA7517"></div></div>
+          <span class="gauge-pct">76%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label">Workstations</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:81%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">81%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label">Data Integrity</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:99%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">99%</span>
+        </div>
+      </div>
+
+      <!-- Active Alarms -->
+      <div class="mini-card">
+        <h3>Active Alarms</h3>
+        <div class="alarm-list">
+          <div class="alarm-item warn">
+            <svg class="alarm-icon" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1L13 12H1L7 1Z" stroke="#854F0B" stroke-width="1" fill="none"/>
+              <path d="M7 5v3M7 10v.5" stroke="#854F0B" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <div class="alarm-text">Coolant pressure near upper limit
+              <span class="alarm-time">07:15 · WBS 3.1</span>
+            </div>
+          </div>
+          <div class="alarm-item info">
+            <svg class="alarm-icon" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="6" stroke="#185FA5" stroke-width="1"/>
+              <path d="M7 4v3M7 9v.5" stroke="#185FA5" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <div class="alarm-text">Network latency elevated
+              <span class="alarm-time">06:48 · WBS 4.3</span>
+            </div>
+          </div>
+          <div class="alarm-item info">
+            <svg class="alarm-icon" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="6" stroke="#185FA5" stroke-width="1"/>
+              <path d="M7 4v3M7 9v.5" stroke="#185FA5" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <div class="alarm-text">Diagnostic poll pending (4.4)
+              <span class="alarm-time">05:55 · WBS 4.4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maintenance Schedule -->
+      <div class="mini-card">
+        <h3>Upcoming Maintenance</h3>
+        <div class="sched-row">
+          <span>Patch deploy – 4.5</span>
+          <span class="sched-chip badge-warn">Today 22:00</span>
+        </div>
+        <div class="sched-row">
+          <span>Safety test – 6.2</span>
+          <span class="sched-chip badge-crit">Tomorrow</span>
+        </div>
+        <div class="sched-row">
+          <span>Backup run – data/</span>
+          <span class="sched-chip badge-info">Wed 02:00</span>
+        </div>
+        <div class="sched-row">
+          <span>Compliance audit</span>
+          <span class="sched-chip badge-ok">Fri 10:00</span>
+        </div>
+      </div>
+
+      <!-- WBS Progress Summary -->
+      <div class="mini-card">
+        <h3>WBS Completion</h3>
+        <div class="gauge-row">
+          <span class="gauge-label" style="font-size:10px">Documentation</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:78%;background:#185FA5"></div></div>
+          <span class="gauge-pct">78%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label" style="font-size:10px">Dashboards</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:72%;background:#185FA5"></div></div>
+          <span class="gauge-pct">72%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label" style="font-size:10px">Security</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:85%;background:#1D9E75"></div></div>
+          <span class="gauge-pct">85%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label" style="font-size:10px">Backend</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:61%;background:#BA7517"></div></div>
+          <span class="gauge-pct">61%</span>
+        </div>
+        <div class="gauge-row">
+          <span class="gauge-label" style="font-size:10px">Testing</span>
+          <div class="gauge-bar-wrap"><div class="gauge-fill" style="width:44%;background:#A32D2D"></div></div>
+          <span class="gauge-pct">44%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function setWBS(el) {
+  document.querySelectorAll('.wbs-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  const code = el.querySelector('.wbs-code').textContent;
+  const label = el.querySelector('.wbs-label').textContent;
+  document.getElementById('wbs-select').value = `${code} – ${label}`;
+}
+
+function tick() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('en-GB');
+}
+tick();
+setInterval(tick, 1000);
+
+setInterval(() => {
+  const t = (287 + Math.random()*1.5).toFixed(1);
+  const p = (15.7 + Math.random()*0.2).toFixed(2);
+  const f = (3.1 + Math.random()*0.2).toFixed(2);
+  const r = (0.010 + Math.random()*0.004).toFixed(3);
+  document.getElementById('temp').textContent = t;
+  document.getElementById('pressure').textContent = p;
+  document.getElementById('flux').textContent = f;
+  document.getElementById('rad').textContent = r;
+}, 3000);
+</script>
