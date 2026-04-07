@@ -3,32 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Properties</title>
-    <link rel="stylesheet" href="update.css">
+    <title>NPPUs | Parameter Excellence Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            /* Light greenish overlay + Background Image */
+            background: linear-gradient(rgba(230, 250, 235, 0.85), rgba(210, 240, 220, 0.85)), 
+                        url('https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        input, select {
+            transition: all 0.2s ease;
+            border: 1px solid #cbd5e1;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #10b981;
+            ring: 2px;
+            ring-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: transform 0.1s active;
+        }
+
+        .btn-update:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .record-card {
+            transition: all 0.3s ease;
+        }
+
+        .record-card:hover {
+            transform: scale(1.01);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-<div class="img">
-<div class="container">
-    <h2>Update Properties</h2>
-    <form id="updateForm">
-        <label for="id">ID:</label>
-        <input type="text" id="id" name="id"><br><br>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name"><br><br>
-        <label for="unit">Unit:</label>
-        <input type="text" id="unit" name="unit"><br><br>
-        <label for="value">Value:</label>
-        <input type="number" id="value" name="value"><br><br>
-        <label for="highAlarm">High Alarm:</label>
-        <input type="number" id="highAlarm" name="highAlarm"><br><br>
-        <label for="lowAlarm">Low Alarm:</label>
-        <input type="number" id="lowAlarm" name="lowAlarm"><br><br>
-        <button type="submit">Update</button>
-    </form>
-    <div id="displayArea"></div>
-</div>
+
+<div class="container max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Update Form -->
+    <div class="lg:col-span-5 glass-panel p-8">
+        <header class="mb-8">
+            <div class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold uppercase tracking-widest mb-2">
+                NPPUs System Update
+            </div>
+            <h2 class="text-3xl font-extrabold text-slate-800 leading-tight">Elevate NPPU Performance</h2>
+            <p class="text-slate-600 mt-2">Precision parameter control for nuclear power units.</p>
+        </header>
+
+        <form id="updateForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Unit ID</label>
+                    <input type="text" id="id" name="id" placeholder="e.g. NPP-01" class="w-full p-3 rounded-xl border bg-white/50" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Parameter Name</label>
+                    <input type="text" id="name" name="name" placeholder="Core Temp" class="w-full p-3 rounded-xl border bg-white/50" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Measurement Unit</label>
+                <select id="unit" name="unit" class="w-full p-3 rounded-xl border bg-white/50">
+                    <option value="°C">Celsius (°C)</option>
+                    <option value="Bar">Pressure (Bar)</option>
+                    <option value="MW">Megawatts (MW)</option>
+                    <option value="mSv">Radiation (mSv)</option>
+                    <option value="%">Percentage (%)</option>
+                    <option value="RPM">Rotation (RPM)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Current Value</label>
+                <input type="number" id="value" name="value" step="0.01" placeholder="0.00" class="w-full p-3 rounded-xl border bg-white/50" required>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">High Alarm Threshold</label>
+                    <input type="number" id="highAlarm" name="highAlarm" step="0.01" class="w-full p-3 rounded-xl border bg-white/50 text-red-600 font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Low Alarm Threshold</label>
+                    <input type="number" id="lowAlarm" name="lowAlarm" step="0.01" class="w-full p-3 rounded-xl border bg-white/50 text-blue-600 font-medium">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full btn-update text-white font-bold py-4 rounded-xl shadow-lg mt-6 uppercase tracking-wider">
+                Sync Update to Grid
+            </button>
+        </form>
+
+        <div id="statusMessage" class="mt-4 p-3 rounded-lg hidden text-center font-medium"></div>
+    </div>
+
+    <!-- Right Column: Record List -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
+        <div class="glass-panel p-6 flex-1 overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Operational Records</h3>
+                <span id="recordCount" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">0 Active</span>
+            </div>
+            
+            <div id="recordList" class="space-y-3 overflow-y-auto pr-2 custom-scrollbar" style="max-height: 600px;">
+                <!-- Placeholder for empty state -->
+                <div id="emptyState" class="text-center py-20 opacity-40">
+                    <svg class="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    <p>No active telemetry data synchronized.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="scriptup.js"></script>
+<script>
+    const updateForm = document.getElementById('updateForm');
+    const recordList = document.getElementById('recordList');
+    const statusMessage = document.getElementById('statusMessage');
+    const emptyState = document.getElementById('emptyState');
+    const recordCountDisplay = document.getElementById('recordCount');
+
+    let records = [];
+
+    function showStatus(msg, type) {
+        statusMessage.textContent = msg;
+        statusMessage.className = `mt-4 p-3 rounded-lg text-center font-medium ${type === 'success' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`;
+        statusMessage.classList.remove('hidden');
+        setTimeout(() => statusMessage.classList.add('hidden'), 3000);
+    }
+
+    function updateDisplay() {
+        if (records.length === 0) {
+            emptyState.classList.remove('hidden');
+            recordCountDisplay.textContent = "0 Active";
+            return;
+        }
+        
+        emptyState.classList.add('hidden');
+        recordCountDisplay.textContent = `${records.length} Active`;
+        
+        recordList.innerHTML = '';
+        records.forEach((record, index) => {
+            const card = document.createElement('div');
+            card.className = "record-card glass-panel p-4 flex justify-between items-center bg-white/40";
+            
+            const isAlarm = record.value > record.highAlarm || record.value < record.lowAlarm;
+            const statusColor = isAlarm ? 'text-red-600' : 'text-emerald-600';
+            
+            card.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs">
+                        ${record.id}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">${record.name}</h4>
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Alarm Threshold: ${record.lowAlarm} - ${record.highAlarm}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xl font-black ${statusColor}">${record.value} <span class="text-sm font-normal text-slate-400">${record.unit}</span></div>
+                    <button onclick="deleteRecord(${index})" class="text-[10px] text-slate-400 hover:text-red-500 font-bold uppercase tracking-tighter transition-colors">Terminate Record</button>
+                </div>
+            `;
+            recordList.prepend(card);
+        });
+    }
+
+    function deleteRecord(index) {
+        records.splice(index, 1);
+        updateDisplay();
+        showStatus("Record removed from log.", "success");
+    }
+
+    updateForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const newRecord = {
+            id: document.getElementById('id').value,
+            name: document.getElementById('name').value,
+            unit: document.getElementById('unit').value,
+            value: parseFloat(document.getElementById('value').value),
+            highAlarm: parseFloat(document.getElementById('highAlarm').value || 100),
+            lowAlarm: parseFloat(document.getElementById('lowAlarm').value || 0)
+        };
+
+        // Check if ID exists to update, otherwise add
+        const existingIndex = records.findIndex(r => r.id === newRecord.id);
+        if (existingIndex > -1) {
+            records[existingIndex] = newRecord;
+            showStatus(`NPP Unit ${newRecord.id} Parameter Synchronized!`, "success");
+        } else {
+            records.push(newRecord);
+            showStatus(`New Record for Unit ${newRecord.id} Established!`, "success");
+        }
+
+        updateForm.reset();
+        updateDisplay();
+    });
+</script>
+
 </body>
 </html>
