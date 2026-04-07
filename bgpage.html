@@ -16,7 +16,7 @@
       /* Light Greenish Theme Variables */
       --green:  #00875a; 
       --green2: #00b377;
-      --bg-base: #eaf5f0; /* Light light greenish background */
+      --bg-base: #eaf5f0; 
       --panel:  #ffffff;
       --border: rgba(0, 135, 90, 0.15);
       --border2:rgba(0, 135, 90, 0.3);
@@ -63,7 +63,7 @@
       transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
       overflow-y: auto;
     }
-    .sidebar.hidden { transform: translateX(-100%); }
+    .sidebar.mobile-active { transform: translateX(0) !important; }
 
     .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
     .logo-mark {
@@ -117,7 +117,7 @@
       position: fixed; top: 16px; left: 16px; z-index: 200;
       width: 36px; height: 36px; background: var(--panel);
       border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 2px 5px var(--shadow);
-      display: flex; align-items: center; justify-content: center;
+      display: none; align-items: center; justify-content: center;
       cursor: pointer; color: var(--green); font-size: 14px;
       transition: background 0.2s;
     }
@@ -127,14 +127,14 @@
     .main {
       margin-left: var(--sidebar-w); flex: 1; padding: 0 28px 48px;
       transition: margin-left 0.3s;
+      width: 100%;
     }
-    .main.expanded { margin-left: 0; }
 
     /* ─── TOPBAR ─── */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 0 16px; border-bottom: 1px solid var(--border);
-      margin-bottom: 20px; gap: 16px;
+      margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
       position: sticky; top: 0; z-index: 50;
       background: rgba(234, 245, 240, 0.9); backdrop-filter: blur(12px);
     }
@@ -154,7 +154,7 @@
     .ticker-wrap {
       overflow: hidden; background: #ffffff;
       border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 2px 10px var(--shadow);
-      padding: 8px 0; margin-bottom: 24px;
+      padding: 8px 0; margin-bottom: 24px; width: 100%;
       animation: fadeInUp 0.5s 0.15s both;
     }
     .ticker { display: flex; gap: 48px; white-space: nowrap; animation: marquee 30s linear infinite; }
@@ -193,13 +193,13 @@
       background: var(--panel); border: 1px solid var(--border); box-shadow: 0 4px 12px var(--shadow);
       border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;
       display: flex; align-items: center; gap: 20px;
-      animation: fadeInUp 0.7s 0.3s both;
+      animation: fadeInUp 0.7s 0.3s both; width: 100%;
     }
-    .node-info { flex-shrink: 0; width: 220px; }
+    .node-info { flex-shrink: 0; min-width: 200px; }
     .node-title { font-family: var(--display); font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .node-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); }
     .node-val { font-family: var(--mono); font-size: 28px; font-weight: 800; color: var(--green); margin-top: 10px; }
-    .node-canvas-wrap { flex: 1; height: 60px; background: #f8fbf9; border-radius: 6px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+    .node-canvas-wrap { flex: 1; height: 60px; background: #f8fbf9; border-radius: 6px; border: 1px solid var(--border); position: relative; overflow: hidden; width: 100%; }
     canvas#telemetry { width: 100%; height: 100%; display: block; }
 
     /* ─── CHAIRMAN & INFO SPLIT ─── */
@@ -211,28 +211,29 @@
     .chairman-card {
       background: var(--panel); border: 1px solid var(--border); box-shadow: 0 4px 12px var(--shadow);
       border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; align-items: center;
-      padding: 30px 20px; text-align: center;
+      padding: 30px 20px; text-align: center; height: 100%;
     }
     .chairman-avatar-lg {
       width: 160px; height: 160px; border-radius: 50%;
       border: 4px solid var(--bg-base); box-shadow: 0 0 0 2px var(--green);
-      overflow: hidden; margin-bottom: 16px;
+      overflow: hidden; margin-bottom: 16px; flex-shrink: 0;
       background: #f0f0f0; display:flex; align-items:center; justify-content:center;
       color: var(--muted); font-size: 40px;
     }
     .chairman-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
     .ch-name { font-family: var(--display); font-size: 18px; font-weight: 800; color: var(--text); }
     .ch-title { font-size: 12px; font-weight: 600; color: var(--green); margin-bottom: 10px; letter-spacing: 0.05em; }
-    .ch-tag { font-family: var(--mono); font-size: 11px; padding: 4px 12px; background: rgba(0, 135, 90, 0.1); color: var(--green); border-radius: 20px; font-weight: 600; }
+    .ch-tag { font-family: var(--mono); font-size: 11px; padding: 4px 12px; background: rgba(0, 135, 90, 0.1); color: var(--green); border-radius: 20px; font-weight: 600; line-height: 1.4; }
 
     .npcil-details {
       background: var(--panel); border: 1px solid var(--border); box-shadow: 0 4px 12px var(--shadow);
       border-radius: 12px; padding: 30px;
       display: flex; flex-direction: column; justify-content: center;
+      overflow-wrap: break-word; word-wrap: break-word; /* Prevents text cut-offs */
     }
     .details-header {
       display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-      border-bottom: 2px solid var(--border); padding-bottom: 12px;
+      border-bottom: 2px solid var(--border); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;
     }
     .details-title { font-family: var(--display); font-size: 20px; font-weight: 800; color: var(--green); }
     .details-loc { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 6px; }
@@ -242,35 +243,52 @@
     .stats-pill-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
     .pill {
       background: var(--bg-base); border: 1px solid var(--border); padding: 8px 16px; border-radius: 8px;
-      font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--green);
+      font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--green); white-space: nowrap;
     }
     .pill i { margin-right: 6px; }
 
-    /* ─── ADVANCED PICTURES GRID ─── */
+    /* ─── INTERACTIVE SCROLLING GALLERY (5 IMAGES) ─── */
     .gallery-section {
       background: var(--panel); border: 1px solid var(--border); box-shadow: 0 4px 12px var(--shadow);
-      border-radius: 12px; padding: 24px; animation: fadeInUp 0.7s 0.5s both; margin-bottom: 28px;
+      border-radius: 12px; padding: 24px; animation: fadeInUp 0.7s 0.5s both; margin-bottom: 28px; width: 100%;
     }
     .gallery-header {
       font-family: var(--display); font-size: 16px; font-weight: 800; color: var(--text);
-      margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
     }
+    .gallery-header div { display: flex; align-items: center; gap: 10px; }
     .gallery-header i { color: var(--green); }
-    .img-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    .swipe-hint { font-family: var(--mono); font-size: 11px; color: var(--muted); background: var(--bg-base); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); }
+    
+    .interactive-scroll {
+      display: flex; gap: 16px; overflow-x: auto; padding-bottom: 16px;
+      scroll-snap-type: x mandatory; scroll-behavior: smooth;
     }
+    /* Custom Scrollbar for Interactive Dashboard */
+    .interactive-scroll::-webkit-scrollbar { height: 10px; }
+    .interactive-scroll::-webkit-scrollbar-track { background: var(--bg-base); border-radius: 5px; }
+    .interactive-scroll::-webkit-scrollbar-thumb { background: var(--green); border-radius: 5px; cursor: pointer; }
+    .interactive-scroll::-webkit-scrollbar-thumb:hover { background: var(--green2); }
+
     .img-card {
+      flex: 0 0 calc(25% - 12px); /* Default Desktop width */
+      min-width: 260px; /* Ensures they don't shrink too small */
+      scroll-snap-align: start;
       border-radius: 8px; overflow: hidden; border: 1px solid var(--border); position: relative;
-      background: var(--bg-base);
+      background: var(--bg-base); cursor: pointer;
+      box-shadow: 0 2px 6px var(--shadow); transition: box-shadow 0.3s;
     }
-    .img-card img { width: 100%; height: 180px; object-fit: cover; display: block; transition: transform 0.4s; }
+    .img-card:hover { box-shadow: 0 8px 20px rgba(0, 135, 90, 0.2); }
+    .img-card img { width: 100%; height: 200px; object-fit: cover; display: block; transition: transform 0.4s; }
     .img-card:hover img { transform: scale(1.05); }
     .img-cap {
-      position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(4px); padding: 10px; border-top: 1px solid var(--border);
+      position: absolute; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(4px); padding: 12px; border-top: 1px solid var(--border);
+      transform: translateY(0); transition: padding 0.3s;
     }
-    .img-cap h4 { font-family: var(--ui); font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px;}
-    .img-cap p { font-family: var(--mono); font-size: 10px; color: var(--muted); font-weight: 600; }
+    .img-card:hover .img-cap { padding-bottom: 16px; }
+    .img-cap h4 { font-family: var(--ui); font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px;}
+    .img-cap p { font-family: var(--mono); font-size: 11px; color: var(--muted); font-weight: 600; }
 
     /* ─── FOOTER ─── */
     .page-footer {
@@ -281,9 +299,46 @@
     }
     .footer-logo { font-family: var(--display); font-size: 12px; font-weight: 800; color: var(--green); letter-spacing: .05em; }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-base); }
-    ::-webkit-scrollbar-thumb { background: rgba(0, 135, 90, 0.3); border-radius: 3px; }
+    /* ════ RESPONSIVE MEDIA QUERIES ════ */
+    
+    /* Tablet & Medium Desktop */
+    @media (max-width: 1024px) {
+      .info-split { grid-template-columns: 1fr; }
+      .chairman-card { flex-direction: row; text-align: left; justify-content: flex-start; gap: 24px; }
+      .chairman-avatar-lg { margin-bottom: 0; width: 120px; height: 120px; }
+      .img-card { flex: 0 0 calc(40% - 16px); }
+    }
+
+    /* Mobile Devices */
+    @media (max-width: 768px) {
+      .btn-hamburger { display: flex; }
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; padding: 0 16px 24px; padding-top: 60px; /* Space for hamburger */ }
+      
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .topbar-right { width: 100%; justify-content: space-between; margin-top: 10px; }
+      
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      
+      .node-tracking-container { flex-direction: column; text-align: center; padding: 16px; }
+      .node-info { width: 100%; margin-bottom: 12px; }
+      .node-canvas-wrap { height: 80px; }
+      
+      .chairman-card { flex-direction: column; text-align: center; gap: 16px; }
+      
+      .details-header { flex-direction: column; align-items: flex-start; }
+      .stats-pill-row { justify-content: center; }
+
+      .img-card { flex: 0 0 calc(85% - 16px); }
+    }
+
+    /* Small Mobile */
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .ticker-item { font-size: 11px; }
+      .img-card { flex: 0 0 calc(90% - 16px); }
+    }
+
   </style>
 </head>
 <body>
@@ -291,6 +346,9 @@
 <div class="bg-canvas">
   <div class="grid-lines"></div>
 </div>
+
+<!-- Mobile Hamburger Button -->
+<button class="btn-hamburger" id="hamBtn"><i class="fas fa-bars"></i></button>
 
 <div class="shell">
 
@@ -321,7 +379,7 @@
             <li><a href="WBS.html"><i class="fas fa-sitemap"></i> WBS Structure</a></li>
           </ul>
         </li>
-        <li><a href="OVERVIEW.pdf.pdf"><i class="fas fa-file-alt"></i> Overview</a></li>
+        <li><a href="OVERVIEW.pdf"><i class="fas fa-file-alt"></i> Overview</a></li>
         <li><a href="npp_para.html"><i class="fas fa-sliders-h"></i> Parameter</a></li>
         <li><a href="alarm.html"><i class="fas fa-bell"></i> Alarm</a></li>
       </ul>
@@ -341,11 +399,9 @@
     </nav>
 
     <div class="sidebar-footer">
-      <span class="status-dot"></span> LIVE MONITORING &nbsp;|&nbsp; v2.5
+      <span class="status-dot"></span> LIVE MONITORING &nbsp;|&nbsp; v2.6
     </div>
   </aside>
-
-  <button class="btn-hamburger" id="hamBtn"><i class="fas fa-bars"></i></button>
 
   <!-- MAIN -->
   <main class="main" id="mainArea">
@@ -431,9 +487,11 @@
         <div class="chairman-avatar-lg">
           <img src="image_5dc2c6.jpg" alt="Chairman, NPCIL" onerror="this.parentElement.innerHTML='<i class=\'fas fa-user-tie\'></i>'">
         </div>
-        <div class="ch-name">Chairman, NPCIL</div>
-        <div class="ch-title">Executive Leadership</div>
-        <div class="ch-tag">Nuclear Power Corporation of India</div>
+        <div>
+          <div class="ch-name">Chairman, NPCIL</div>
+          <div class="ch-title">Executive Leadership</div>
+          <div class="ch-tag">Nuclear Power Corporation of India</div>
+        </div>
       </div>
 
       <div class="npcil-details">
@@ -454,38 +512,52 @@
       </div>
     </div>
 
-    <!-- Advanced Picture Gallery Section -->
+    <!-- Interactive Scrolling Gallery (5 Images) -->
     <div class="gallery-section">
       <div class="gallery-header">
-        <i class="fas fa-camera"></i> Live Facility & Operational Overviews
+        <div><i class="fas fa-camera"></i> Live Facility & Operational Overviews</div>
+        <div class="swipe-hint"><i class="fas fa-arrows-alt-h"></i> Scroll to explore</div>
       </div>
-      <div class="img-grid">
+      
+      <div class="interactive-scroll" id="dashboardScroll">
+        <!-- Image 1 -->
         <div class="img-card">
-          <img src="Screenshot 2026-04-07 203825.jpg" alt="Nabhikiya Urja Bhavan">
+          <img src="Screenshot 2026-04-07 203825.png" alt="Nabhikiya Urja Bhavan">
           <div class="img-cap">
             <h4>Nabhikiya Urja Bhavan</h4>
             <p>NPCIL Headquarters</p>
           </div>
         </div>
+        <!-- Image 2 -->
         <div class="img-card">
-          <img src="Screenshot 2026-04-07 203606.jpg" alt="Main Control Room">
+          <img src="Screenshot 2026-04-07 203634.png" alt="Main Control Room">
           <div class="img-cap">
             <h4>Main Control Room (MCR)</h4>
             <p>Real-time SCADA parameter monitoring</p>
           </div>
         </div>
+        <!-- Image 3 -->
         <div class="img-card">
-          <img src="Screenshot 2026-04-07 203634.png" alt="Advanced Monitoring">
+          <img src="Screenshot 2026-04-07 203606.png" alt="Advanced Monitoring">
           <div class="img-cap">
             <h4>Advanced Monitoring Systems</h4>
             <p>Digital parameter tracking and safety</p>
           </div>
         </div>
+        <!-- Image 4 -->
         <div class="img-card">
           <img src="Screenshot 2026-04-07 203853.png" alt="Coal India Partnership">
           <div class="img-cap">
             <h4>Energy Partnerships</h4>
             <p>Coal India Limited Collaboration</p>
+          </div>
+        </div>
+        <!-- Image 5 (New Slot) -->
+        <div class="img-card">
+          <img src="Screenshot 2026-04-07 203935.png" alt="Future Expansion Site">
+          <div class="img-cap">
+            <h4>Expansion & Future Projects</h4>
+            <p>Next-Gen Reactor Site Preparation</p>
           </div>
         </div>
       </div>
@@ -507,11 +579,22 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // Sidebar Toggles
-  $('#hamBtn').click(function() {
-    $('#sidebar').toggleClass('hidden');
-    $('#mainArea').toggleClass('expanded');
+  // Sidebar Toggles for Mobile
+  $('#hamBtn').click(function(e) {
+    e.stopPropagation();
+    $('#sidebar').toggleClass('mobile-active');
   });
+
+  // Close sidebar if clicking outside on mobile
+  $(document).click(function(event) {
+    if (!$(event.target).closest('#sidebar, #hamBtn').length) {
+      if ($('#sidebar').hasClass('mobile-active')) {
+        $('#sidebar').removeClass('mobile-active');
+      }
+    }
+  });
+
+  // Accordion Menus
   $('.feat-btn').click(function(e) {
     e.preventDefault();
     $('nav ul .feat-show').toggleClass("show");
@@ -522,8 +605,12 @@
     $('nav ul .serv-show').toggleClass("show1");
     $('nav ul .second').toggleClass("rotate");
   });
-  $('nav ul li').click(function() {
-    $(this).addClass("active").siblings().removeClass("active");
+  $('nav ul li').click(function(e) {
+    // Avoid active class logic breaking dropdowns
+    if(!$(this).children('ul').length){
+        $('nav ul li').removeClass("active");
+        $(this).addClass("active");
+    }
   });
 
   // Live param flicker
@@ -537,7 +624,7 @@
     document.getElementById('nodeCount').textContent = nodeCount;
   }, 2500);
 
-  // Node Telemetry Canvas Animation
+  // Node Telemetry Canvas Animation (Responsive)
   const canvas = document.getElementById('telemetry');
   const ctx = canvas.getContext('2d');
   let dataPoints = new Array(100).fill(20);
@@ -547,7 +634,8 @@
     canvas.height = canvas.parentElement.clientHeight;
   }
   window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  // Initial delay to ensure DOM is fully rendered before sizing canvas
+  setTimeout(resizeCanvas, 100);
 
   function drawTelemetry() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -585,6 +673,34 @@
     requestAnimationFrame(drawTelemetry);
   }
   drawTelemetry();
+
+  // Interactive mouse dragging for the scrollable gallery
+  const slider = document.getElementById('dashboardScroll');
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  slider.addEventListener('mousedown', (e) => {
+    isDown = true;
+    slider.style.cursor = 'grabbing';
+    startX = e.pageX - slider.offsetLeft;
+    scrollLeft = slider.scrollLeft;
+  });
+  slider.addEventListener('mouseleave', () => {
+    isDown = false;
+    slider.style.cursor = 'grab';
+  });
+  slider.addEventListener('mouseup', () => {
+    isDown = false;
+    slider.style.cursor = 'grab';
+  });
+  slider.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll-fast
+    slider.scrollLeft = scrollLeft - walk;
+  });
 
 </script>
 
