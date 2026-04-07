@@ -6,172 +6,169 @@
     <title>Global NPP Monitoring Command</title>
     <style>
         :root {
-            --bg-base: #f0fdf4; /* Light light greenish */
-            --header-bg: #166534;
+            --bg-base: #f0fdf4; 
+            --header-bg: #064e3b;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
+            --text-main: #064e3b;
+            --text-muted: #475569;
             --success: #22c55e;
-            --warning: #f59e0b;
+            --warning: #eab308;
             --danger: #ef4444;
-            --border: #dcfce7;
+            --border: #bbf7d0;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-base);
-            /* Subtle greenish texture using SVG pattern */
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48 0l7 7-1.414 1.414L46.586 1.414 48 0zm-36 0L5 7l1.414 1.414L13.414 1.414 12 0zM0 54.627l.828.83 1.415-1.415L0 51.8v2.827zM0 5.373l.828-.83L2.243 5.96 0 8.2V5.374zM0 48l7 7 1.414-1.414L1.414 46.586 0 48zM0 12l7-7 1.414 1.414L1.414 13.414 0 12zM54.627 60l.83-.828-1.415-1.415L51.8 60h2.827zM5.373 60l-.83-.828L5.96 57.757 8.2 60H5.374zM48 60l7-7-1.414-1.414L46.586 58.586 48 60zm-36 0L5 53l1.414-1.414L13.414 58.586 12 60zM60 54.627l-.828.83-1.415-1.415L60 51.8v2.827zM60 5.373l-.828-.83-1.415 1.415L60 8.2V5.374zM60 48l-7 7-1.414-1.414L58.586 46.586 60 48zM60 12l-7-7-1.414 1.414L58.586 13.414 60 12z' fill='%2316a34a' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            /* Light greenish texture */
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0V0zm10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm20 0a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM10 37a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm20 0a7 7 0 1 0 0-14 7 7 0 0 0 0 14z' fill='%2316a34a' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
             margin: 0;
             color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .top-bar {
             background: var(--header-bg);
-            color: white;
-            padding: 1rem 2rem;
+            color: #f0fdf4;
+            padding: 0.6rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .stats-summary {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
-            padding: 1.5rem 2rem;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--border);
         }
 
         .summary-item {
             background: var(--card-bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
             border: 1px solid var(--border);
             text-align: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .summary-val {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: block;
-        }
+        .summary-val { font-size: 1.1rem; font-weight: 800; display: block; }
+        .summary-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .summary-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .main-content {
-            padding: 2rem;
-        }
-
-        .controls {
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .search-input {
-            padding: 0.6rem 1rem;
-            border-radius: 0.4rem;
-            border: 1px solid var(--border);
-            width: 300px;
-            outline: none;
+        .main-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.5rem;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.5rem;
         }
 
         .station-card {
             background: var(--card-bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 3px;
             border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
             position: relative;
-            overflow: hidden;
+            font-size: 0.75rem;
+            transition: transform 0.1s;
         }
 
-        .station-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        .status-strip { height: 3px; width: 100%; position: absolute; top: 0; left: 0; }
+
+        /* Real-time Incident Feed */
+        .incident-panel {
+            background: #0f172a;
+            color: #f1f5f9;
+            height: 200px;
+            border-top: 4px solid var(--danger);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
         }
 
-        .status-strip {
-            height: 4px;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .station-name {
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .data-row {
+        .incident-header {
+            background: #020617;
+            padding: 0.4rem 1.5rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 0.75rem;
-            margin-bottom: 0.25rem;
+            font-weight: bold;
+            color: #ff4d4d;
+            letter-spacing: 1px;
         }
 
-        .data-label { color: var(--text-muted); }
-        .data-value { font-family: monospace; font-weight: 600; }
+        .incident-list {
+            flex: 1;
+            overflow-x: auto;
+            display: flex;
+            gap: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            align-items: flex-start;
+        }
 
-        /* Severity Classes */
+        .incident-ticket {
+            min-width: 180px;
+            background: #1e293b;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border-left: 4px solid var(--danger);
+            border-bottom: 1px solid #334155;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .data-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .data-label { color: #94a3b8; font-size: 0.65rem; }
+        .data-value { font-family: 'Courier New', monospace; font-weight: 600; }
+
         .bg-ok { background-color: var(--success); }
         .bg-warn { background-color: var(--warning); }
         .bg-crit { background-color: var(--danger); }
-        
-        .text-ok { color: var(--success); }
-        .text-warn { color: var(--warning); }
-        .text-crit { color: var(--danger); }
+        .text-crit { color: #ff4d4d; font-weight: bold; }
+        .blink { animation: blinker 1s linear infinite; }
 
-        @media (max-width: 768px) {
-            .stats-summary { grid-template-columns: repeat(2, 1fr); }
-            .search-input { width: 100%; }
+        @keyframes blinker {
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
     <div class="top-bar">
         <div>
-            <h2 style="margin:0; font-size: 1.2rem;">GLOBAL NPP COMMAND CENTER</h2>
-            <small style="opacity: 0.8">Real-time Concurrent Monitoring Assets</small>
+            <h2 style="margin:0; font-size: 1rem;">NPP REAL-TIME GLOBAL COMMAND</h2>
+            <small style="opacity: 0.8">Continuous Monitoring: 120 Nodes</small>
         </div>
-        <div id="clock" style="font-family: monospace; font-size: 1.1rem;"></div>
+        <div id="clock" style="font-family: monospace; font-size: 0.9rem;"></div>
     </div>
 
     <div class="stats-summary">
         <div class="summary-item">
-            <span class="summary-label">Total Stations</span>
+            <span class="summary-label">Active Assets</span>
             <span class="summary-val" id="total-stations">120</span>
         </div>
         <div class="summary-item">
-            <span class="summary-label">Active Power Gen</span>
+            <span class="summary-label">Fleet Output</span>
             <span class="summary-val" id="total-power">0 GW</span>
         </div>
         <div class="summary-item">
-            <span class="summary-label">System Health</span>
-            <span class="summary-val text-ok" id="system-health">98.2%</span>
+            <span class="summary-label">Operational Health</span>
+            <span class="summary-val" id="fleet-health" style="color: var(--success)">100%</span>
         </div>
         <div class="summary-item">
             <span class="summary-label">Critical Alerts</span>
@@ -179,14 +176,17 @@
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="controls">
-            <input type="text" id="search" class="search-input" placeholder="Search station ID or location...">
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Showing all active nodes</span>
+    <div class="main-scroll-area">
+        <div class="grid-container" id="grid"></div>
+    </div>
+
+    <div class="incident-panel">
+        <div class="incident-header">
+            <span><span class="blink">●</span> LIVE EXCEEDANCE STREAM (Real-time updates)</span>
+            <span id="incident-count">SYSTEMS NOMINAL</span>
         </div>
-        
-        <div class="grid-container" id="grid">
-            <!-- 120 Stations injected here -->
+        <div class="incident-list" id="incident-feed">
+            <!-- Critical stations appear here dynamically -->
         </div>
     </div>
 
@@ -195,97 +195,112 @@
         let stations = [];
         const regions = ['NA', 'EU', 'AS', 'SA', 'AF', 'OC'];
 
-        // Initialize 120 stations
         function initData() {
             for (let i = 1; i <= stationCount; i++) {
                 stations.push({
                     id: `NPP-${String(i).padStart(3, '0')}`,
                     location: regions[Math.floor(Math.random() * regions.length)] + '-' + (100 + i),
-                    power: 2000 + Math.random() * 1000,
-                    temp: 290 + Math.random() * 40,
-                    pressure: 14.5 + Math.random() * 2,
-                    status: 'ok'
+                    power: 2400 + Math.random() * 600,
+                    temp: 305 + Math.random() * 15, // Closer to threshold for simulation
+                    pressure: 15.2 + Math.random() * 0.8,
                 });
             }
         }
 
         function getSeverity(s) {
-            if (s.temp > 325 || s.pressure > 16.2) return 'crit';
-            if (s.temp > 318 || s.pressure > 15.8) return 'warn';
+            if (s.temp > 323 || s.pressure > 16.1) return 'crit';
+            if (s.temp > 317 || s.pressure > 15.8) return 'warn';
             return 'ok';
         }
 
-        function renderGrid(filter = '') {
+        function updateUI() {
             const grid = document.getElementById('grid');
-            const filtered = stations.filter(s => 
-                s.id.toLowerCase().includes(filter.toLowerCase()) || 
-                s.location.toLowerCase().includes(filter.toLowerCase())
-            );
+            const feed = document.getElementById('incident-feed');
+            let incidentsHtml = '';
+            let totalPower = 0;
+            let critCount = 0;
 
-            grid.innerHTML = filtered.map(s => {
+            // Sort stations so critical ones are easier to track if needed, 
+            // but here we keep ID order for grid stability.
+            grid.innerHTML = stations.map(s => {
                 const sev = getSeverity(s);
+                totalPower += s.power;
+                
+                if (sev === 'crit') {
+                    critCount++;
+                    incidentsHtml += `
+                        <div class="incident-ticket">
+                            <div style="font-weight:bold; color:#f1f5f9; margin-bottom:6px; border-bottom:1px solid #334155; padding-bottom:2px;">
+                                ${s.id} <span style="font-size:0.6rem; color:#94a3b8;">[${s.location}]</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">CORE TEMP:</span>
+                                <span class="text-crit">${s.temp.toFixed(1)}°C</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">PRESSURE:</span>
+                                <span class="text-crit">${s.pressure.toFixed(2)} MPa</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">OUTPUT:</span>
+                                <span style="color:#22c55e;">${(s.power/1000).toFixed(2)} GW</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="station-card">
                         <div class="status-strip bg-${sev}"></div>
-                        <span class="station-name">${s.id}</span>
-                        <div class="data-row">
-                            <span class="data-label">Loc:</span>
-                            <span class="data-value">${s.location}</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Pwr:</span>
-                            <span class="data-value">${(s.power / 1000).toFixed(2)} GW</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Temp:</span>
-                            <span class="data-value ${sev !== 'ok' ? 'text-' + sev : ''}">${s.temp.toFixed(1)}°C</span>
-                        </div>
-                        <div class="data-row">
-                            <span class="data-label">Pres:</span>
-                            <span class="data-value">${s.pressure.toFixed(2)} MPa</span>
-                        </div>
+                        <div style="font-weight:700; color:var(--text-main);">${s.id}</div>
+                        <div class="data-row"><span class="data-label">T:</span><span class="data-value ${sev==='crit'?'text-crit':''}">${s.temp.toFixed(0)}°</span></div>
+                        <div class="data-row"><span class="data-label">P:</span><span class="data-value">${(s.power/1000).toFixed(1)}G</span></div>
                     </div>
                 `;
             }).join('');
 
-            // Update Summary
-            const totalPower = filtered.reduce((acc, s) => acc + s.power, 0) / 1000;
-            const alerts = filtered.filter(s => getSeverity(s) === 'crit').length;
+            // Update Incident Feed
+            feed.innerHTML = incidentsHtml || `
+                <div style="color:#64748b; font-size:0.85rem; display:flex; align-items:center; width:100%; justify-content:center; border:1px dashed #334155; border-radius:4px; height:60px;">
+                    All 120 nodes reporting within safety tolerances.
+                </div>`;
             
-            document.getElementById('total-power').innerText = totalPower.toFixed(1) + ' GW';
-            document.getElementById('active-alerts').innerText = alerts;
-            document.getElementById('total-stations').innerText = filtered.length;
+            // Update Headers
+            document.getElementById('total-power').innerText = (totalPower / 1000).toFixed(1) + ' GW';
+            document.getElementById('active-alerts').innerText = critCount;
+            document.getElementById('incident-count').innerText = critCount > 0 ? `${critCount} THRESHOLD VIOLATIONS` : 'NO ACTIVE ISSUES';
+            
+            const health = ((stationCount - critCount) / stationCount * 100).toFixed(1);
+            const healthEl = document.getElementById('fleet-health');
+            healthEl.innerText = health + '%';
+            healthEl.style.color = health < 98 ? 'var(--danger)' : 'var(--success)';
         }
 
-        function updateData() {
+        function simulate() {
             stations.forEach(s => {
-                // Random drift
-                s.power += (Math.random() - 0.5) * 10;
-                s.temp += (Math.random() - 0.5) * 2;
-                s.pressure += (Math.random() - 0.5) * 0.1;
+                // Real-time fluctuation
+                s.power += (Math.random() - 0.5) * 25;
+                s.temp += (Math.random() - 0.5) * 5; // Higher volatility for demo
+                s.pressure += (Math.random() - 0.5) * 0.25;
                 
-                // Keep within realistic bounds
-                if(s.temp < 280) s.temp = 280;
-                if(s.temp > 340) s.temp = 335; 
+                // Clamping
+                if(s.temp < 290) s.temp = 295;
+                if(s.temp > 330) s.temp = 328;
+                if(s.power < 2000) s.power = 2000;
             });
-            renderGrid(document.getElementById('search').value);
-        }
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toUTCString().replace('GMT', 'UTC');
+            updateUI();
         }
 
         window.onload = () => {
             initData();
-            renderGrid();
-            setInterval(updateData, 3000);
-            setInterval(updateClock, 1000);
-            updateClock();
-
-            document.getElementById('search').addEventListener('input', (e) => {
-                renderGrid(e.target.value);
-            });
+            updateUI();
+            setInterval(simulate, 2000); // 2 second cycles
+            
+            // Independent Clock
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toLocaleTimeString() + " | " + now.toLocaleDateString();
+            }, 1000);
         };
     </script>
 </body>
