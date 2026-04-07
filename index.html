@@ -18,7 +18,8 @@
       --text-dark: #1a1a2e;
       --text-light: #ffffff;
       --overlay-green: rgba(0, 166, 81, 0.15);
-      --glass-bg: rgba(255, 255, 255, 0.95);
+      /* Updated to a light greenish tint */
+      --glass-bg: rgba(242, 252, 246, 0.97);
       --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.1);
       --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.2);
     }
@@ -119,18 +120,21 @@
       }
     }
 
-    /* Form box */
+    /* Form box with light greenish texture */
     .form-box {
       width: 100%;
       max-width: 500px;
       position: relative;
       z-index: 10;
       background: var(--glass-bg);
+      /* Subtle texture added here */
+      background-image: radial-gradient(rgba(0, 166, 81, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
       padding: 50px 45px 60px;
       border-radius: 24px;
       box-shadow: var(--shadow-strong);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(0, 166, 81, 0.2);
       animation: slideUp 0.6s ease-out;
     }
 
@@ -183,12 +187,10 @@
       color: var(--text-light);
     }
 
-    /* You can replace this with actual logo */
     .logo-placeholder {
       width: 60px;
       height: 60px;
       background: url('logo.png') center/contain no-repeat;
-      /* If no logo exists, the icon will show */
     }
 
     .title-container {
@@ -243,7 +245,7 @@
       font-size: 15px;
       font-family: 'Outfit', sans-serif;
       transition: all 0.3s ease;
-      background: #fafafa;
+      background: rgba(255, 255, 255, 0.6);
       color: var(--text-dark);
     }
 
@@ -263,7 +265,6 @@
       color: #aaa;
     }
 
-    /* Name field animation */
     .input-field.hide-field {
       max-height: 0;
       opacity: 0;
@@ -276,7 +277,6 @@
       opacity: 1;
     }
 
-    /* Forgot password link */
     .forgot-link {
       text-align: right;
       margin-top: -10px;
@@ -295,7 +295,6 @@
       text-decoration: underline;
     }
 
-    /* Button field */
     .btn-field {
       display: flex;
       gap: 12px;
@@ -346,12 +345,8 @@
       box-shadow: 0 8px 25px rgba(0, 166, 81, 0.4);
     }
 
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-
     .btn-secondary {
-      background: white;
+      background: rgba(255, 255, 255, 0.8);
       color: var(--text-dark);
       border: 2px solid #e8e8e8;
     }
@@ -362,15 +357,11 @@
       transform: translateY(-2px);
     }
 
-    .btn-secondary:active {
-      transform: translateY(0);
-    }
-
     /* Guest access section */
     .guest-section {
       margin-top: 30px;
       padding-top: 30px;
-      border-top: 1px solid #e8e8e8;
+      border-top: 1px solid rgba(0, 166, 81, 0.1);
     }
 
     .guest-title {
@@ -405,14 +396,10 @@
       box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
     }
 
-    .guest-btn i {
-      margin-right: 8px;
-    }
-
     .visitor-log-btn {
       width: 100%;
       padding: 12px 20px;
-      background: white;
+      background: rgba(255, 255, 255, 0.8);
       color: var(--secondary-color);
       border: 2px solid var(--secondary-color);
       border-radius: 12px;
@@ -430,11 +417,7 @@
       transform: translateY(-2px);
     }
 
-    .visitor-log-btn i {
-      margin-right: 8px;
-    }
-
-    /* Modal styles */
+    /* Modal styles with light greenish texture */
     .modal {
       display: none;
       position: fixed;
@@ -458,12 +441,16 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
+      background: var(--glass-bg);
+      /* Subtle texture added to modals too */
+      background-image: radial-gradient(rgba(0, 166, 81, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
       padding: 40px;
       border-radius: 20px;
       max-width: 450px;
       width: 90%;
       box-shadow: var(--shadow-strong);
+      border: 1px solid rgba(0, 166, 81, 0.2);
       animation: slideUp 0.4s ease;
     }
 
@@ -508,6 +495,7 @@
       font-family: 'Outfit', sans-serif;
       margin-bottom: 20px;
       transition: all 0.3s ease;
+      background: white;
     }
 
     .modal-input:focus {
@@ -566,7 +554,7 @@
     }
 
     .visitor-table tbody tr:hover {
-      background: #f5f5f5;
+      background: rgba(0, 166, 81, 0.05);
     }
 
     .no-data {
@@ -576,7 +564,7 @@
       font-style: italic;
     }
 
-    /* Success message */
+    /* Success/Error message */
     .success-msg {
       background: #d4edda;
       color: #155724;
@@ -586,17 +574,6 @@
       border-left: 4px solid #28a745;
       display: none;
       animation: slideDown 0.3s ease;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .error-msg {
@@ -615,50 +592,25 @@
       .form-box {
         padding: 40px 30px 50px;
       }
-
-      .header-container {
-        gap: 15px;
-      }
-
-      .logo-container {
-        width: 60px;
-        height: 60px;
-      }
-
-      .logo-container i {
-        font-size: 30px;
-      }
-
       .title-container h1 {
         font-size: 22px;
       }
-
       .btn-field {
         flex-direction: column;
-      }
-
-      .modal-content {
-        padding: 30px 25px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Background layers -->
     <div class="background-layer"></div>
     <div class="dark-overlay"></div>
     <div class="green-overlay"></div>
-    
-    <!-- Animated particles -->
     <div class="particles" id="particles"></div>
 
-    <!-- Form box -->
     <div class="form-box">
-      <!-- Header with logo and title -->
       <div class="header-container">
         <div class="logo-container">
-          <!-- Replace with actual logo: <img src="logo.png" alt="NPCIL Logo" style="width: 100%; height: 100%; object-fit: contain;"> -->
           <i class="fas fa-atom"></i>
         </div>
         <div class="title-container">
@@ -667,38 +619,31 @@
         </div>
       </div>
 
-      <!-- Success/Error messages -->
       <div class="success-msg" id="successMsg"></div>
       <div class="error-msg" id="errorMsg"></div>
 
-      <!-- Main form -->
       <form id="authForm">
         <div class="input-group">
-          <!-- Name field (hidden by default for sign in) -->
           <div class="input-field hide-field" id="nameField">
             <input type="text" id="nameInput" placeholder="Full Name">
             <i class="fa-regular fa-user"></i>
           </div>
 
-          <!-- Email field -->
           <div class="input-field">
             <input type="email" id="emailInput" placeholder="Email Address" required>
             <i class="fa-regular fa-envelope"></i>
           </div>
 
-          <!-- Password field -->
           <div class="input-field">
             <input type="password" id="passwordInput" placeholder="Password" required>
             <i class="fa-solid fa-lock"></i>
           </div>
         </div>
 
-        <!-- Forgot password -->
         <div class="forgot-link">
           <a href="help.html">Forgot password?</a>
         </div>
 
-        <!-- Sign In / Sign Up buttons -->
         <div class="btn-field">
           <button type="button" class="btn-primary" id="signInBtn">
             <i class="fas fa-sign-in-alt"></i> Sign In
@@ -709,7 +654,6 @@
         </div>
       </form>
 
-      <!-- Guest access section -->
       <div class="guest-section">
         <div class="guest-title">Temporary Access</div>
         <button class="guest-btn" id="guestBtn">
@@ -722,7 +666,6 @@
     </div>
   </div>
 
-  <!-- Guest Email Modal -->
   <div id="guestModal" class="modal">
     <div class="modal-content">
       <span class="close-modal" id="closeGuestModal">&times;</span>
@@ -737,7 +680,6 @@
     </div>
   </div>
 
-  <!-- Visitor Log Password Modal -->
   <div id="passwordModal" class="modal">
     <div class="modal-content">
       <span class="close-modal" id="closePasswordModal">&times;</span>
@@ -752,7 +694,6 @@
     </div>
   </div>
 
-  <!-- Visitor Log Display Modal -->
   <div id="visitorLogModal" class="modal">
     <div class="modal-content" style="max-width: 600px;">
       <span class="close-modal" id="closeVisitorLogModal">&times;</span>
@@ -783,11 +724,9 @@
   </div>
 
   <script>
-    // Create animated particles
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
       const particleCount = 20;
-      
       for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
@@ -798,10 +737,8 @@
         particlesContainer.appendChild(particle);
       }
     }
-
     createParticles();
 
-    // Form elements
     const nameField = document.getElementById('nameField');
     const nameInput = document.getElementById('nameInput');
     const emailInput = document.getElementById('emailInput');
@@ -811,15 +748,11 @@
     const authForm = document.getElementById('authForm');
     const successMsg = document.getElementById('successMsg');
     const errorMsg = document.getElementById('errorMsg');
-
-    // Guest elements
     const guestBtn = document.getElementById('guestBtn');
     const guestModal = document.getElementById('guestModal');
     const closeGuestModal = document.getElementById('closeGuestModal');
     const guestEmail = document.getElementById('guestEmail');
     const guestSubmitBtn = document.getElementById('guestSubmitBtn');
-
-    // Visitor log elements
     const visitorLogBtn = document.getElementById('visitorLogBtn');
     const passwordModal = document.getElementById('passwordModal');
     const closePasswordModal = document.getElementById('closePasswordModal');
@@ -832,7 +765,6 @@
 
     let isSignUpMode = false;
 
-    // Show message function
     function showMessage(message, isError = false) {
       if (isError) {
         errorMsg.textContent = message;
@@ -843,14 +775,12 @@
         successMsg.style.display = 'block';
         errorMsg.style.display = 'none';
       }
-      
       setTimeout(() => {
         successMsg.style.display = 'none';
         errorMsg.style.display = 'none';
       }, 4000);
     }
 
-    // Toggle between Sign In and Sign Up
     signUpBtn.addEventListener('click', function() {
       isSignUpMode = true;
       nameField.classList.remove('hide-field');
@@ -864,14 +794,12 @@
 
     signInBtn.addEventListener('click', function() {
       if (!isSignUpMode) {
-        // Sign in action
         if (emailInput.value && passwordInput.value) {
           window.location.href = 'bgpage.html';
         } else {
           showMessage('Please fill in all required fields', true);
         }
       } else {
-        // Switch back to sign in mode
         isSignUpMode = false;
         nameField.classList.remove('show-field');
         nameField.classList.add('hide-field');
@@ -883,7 +811,6 @@
       }
     });
 
-    // Handle actual sign up submission
     authForm.addEventListener('submit', function(e) {
       e.preventDefault();
       if (isSignUpMode && nameInput.value && emailInput.value && passwordInput.value) {
@@ -891,7 +818,6 @@
       }
     });
 
-    // Guest authentication
     guestBtn.addEventListener('click', function() {
       guestModal.style.display = 'block';
       guestEmail.value = '';
@@ -903,48 +829,33 @@
 
     guestSubmitBtn.addEventListener('click', function() {
       const email = guestEmail.value.trim();
-      
       if (!email) {
         showMessage('Please enter your email address', true);
         return;
       }
-
-      // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         showMessage('Please enter a valid email address', true);
         return;
       }
-
-      // Store guest email in localStorage
       storeGuestEmail(email);
-      
-      // Redirect to dashboard
       window.location.href = 'bgpage.html';
     });
 
-    // Store guest email with timestamp
     function storeGuestEmail(email) {
       let guestLog = JSON.parse(localStorage.getItem('guestVisitors') || '[]');
-      
       const visitor = {
         email: email,
         timestamp: new Date().toISOString(),
         dateFormatted: new Date().toLocaleString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', hour12: true
         })
       };
-      
       guestLog.push(visitor);
       localStorage.setItem('guestVisitors', JSON.stringify(guestLog));
     }
 
-    // Visitor log button
     visitorLogBtn.addEventListener('click', function() {
       passwordModal.style.display = 'block';
       visitorPassword.value = '';
@@ -956,7 +867,6 @@
 
     passwordSubmitBtn.addEventListener('click', function() {
       const password = visitorPassword.value;
-      
       if (password === '91') {
         passwordModal.style.display = 'none';
         displayVisitorLog();
@@ -966,10 +876,8 @@
       }
     });
 
-    // Display visitor log
     function displayVisitorLog() {
       const guestLog = JSON.parse(localStorage.getItem('guestVisitors') || '[]');
-      
       if (guestLog.length === 0) {
         visitorTableBody.innerHTML = '<tr><td colspan="3" class="no-data">No visitor records found</td></tr>';
       } else {
@@ -981,7 +889,6 @@
           </tr>
         `).join('');
       }
-      
       visitorLogModal.style.display = 'block';
     }
 
@@ -989,40 +896,27 @@
       visitorLogModal.style.display = 'none';
     });
 
-    // Clear visitor log
     clearLogBtn.addEventListener('click', function() {
-      if (confirm('Are you sure you want to clear all visitor records? This action cannot be undone.')) {
+      if (confirm('Are you sure you want to clear all visitor records?')) {
         localStorage.removeItem('guestVisitors');
         visitorTableBody.innerHTML = '<tr><td colspan="3" class="no-data">No visitor records found</td></tr>';
         showMessage('Visitor log cleared successfully');
       }
     });
 
-    // Close modals when clicking outside
     window.addEventListener('click', function(event) {
-      if (event.target === guestModal) {
-        guestModal.style.display = 'none';
-      }
-      if (event.target === passwordModal) {
-        passwordModal.style.display = 'none';
-      }
-      if (event.target === visitorLogModal) {
-        visitorLogModal.style.display = 'none';
-      }
+      if (event.target === guestModal) guestModal.style.display = 'none';
+      if (event.target === passwordModal) passwordModal.style.display = 'none';
+      if (event.target === visitorLogModal) visitorLogModal.style.display = 'none';
     });
 
-    // Prevent form submission on Enter key
     authForm.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         if (isSignUpMode) {
-          if (nameInput.value && emailInput.value && passwordInput.value) {
-            window.location.href = 'account.html';
-          }
+          if (nameInput.value && emailInput.value && passwordInput.value) window.location.href = 'account.html';
         } else {
-          if (emailInput.value && passwordInput.value) {
-            window.location.href = 'bgpage.html';
-          }
+          if (emailInput.value && passwordInput.value) window.location.href = 'bgpage.html';
         }
       }
     });
