@@ -3,19 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuclear Power Plant Alarm</title>
-    <link rel="stylesheet" href="alarm.css">
+    <title>NPCIL | Real-Time Reactor Monitoring System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap');
+
+        body {
+            background-color: #f0f7f4; /* Light light greenish */
+            font-family: 'Inter', sans-serif;
+            color: #1a2f23;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+
+        .workstation-card {
+            background: white;
+            border: 1px solid #cde2d5;
+            border-radius: 6px;
+            padding: 0.75rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workstation-card:hover {
+            border-color: #4ade80;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-normal { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .status-warning { background-color: #eab308; box-shadow: 0 0 8px #eab308; animation: pulse 1s infinite; }
+        .status-critical { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; animation: pulse 0.5s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .scroll-container {
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f0f7f4; }
+        ::-webkit-scrollbar-thumb { background: #cbdad1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a5bdaf; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #e2eee7;
+        }
+    </style>
 </head>
-<body>
-    <div class="img">
-        <div class="container">
-    <div class="container">
-        <h1>Nuclear Power Plant Alarm Dashboard</h1>
-        <p>Values will be updating every minute.Persue it with the "ok" button</p>
-        <div id="parameters"></div>
+<body class="antialiased">
+
+    <!-- Header Section -->
+    <header class="glass-header sticky top-0 z-50 px-6 py-4 flex flex-wrap justify-between items-center">
+        <div class="flex items-center gap-4">
+            <div class="bg-emerald-800 text-white p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight text-emerald-900">NPCIL REACTOR CONTROL</h1>
+                <p class="text-xs uppercase tracking-widest text-emerald-600 font-bold">Unit 4 - Active Monitoring System</p>
+            </div>
+        </div>
+
+        <div class="flex gap-8 items-center text-sm">
+            <div class="text-right">
+                <p class="text-gray-500 font-medium">OPERATOR</p>
+                <p class="font-bold text-emerald-800">Deblina Mandal</p>
+            </div>
+            <div class="text-right border-l pl-8 border-gray-200">
+                <p class="text-gray-500 font-medium">SYSTEM TIME</p>
+                <p id="clock" class="font-bold mono text-emerald-800">--:--:--</p>
+            </div>
+            <div id="global-status" class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                <span class="status-indicator status-normal"></span>
+                SYSTEM NOMINAL
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 pb-0">
+        <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase">Avg Temperature</p>
+            <p class="text-2xl font-bold text-emerald-700 mono" id="avg-temp">285.4°C</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase">Coolant Flow Rate</p>
+            <p class="text-2xl font-bold text-blue-600 mono" id="flow-rate">98.2%</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase">Radiation Level</p>
+            <p class="text-2xl font-bold text-emerald-600 mono" id="rad-level">0.04 mSv</p>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
+            <p class="text-xs font-bold text-gray-400 uppercase">Alert Count</p>
+            <p class="text-2xl font-bold text-red-500 mono" id="alert-count">0</p>
+        </div>
     </div>
-    <script src="scriptalarm.js"></script>
-  </div>
-</div>
+
+    <!-- Main Monitoring Grid -->
+    <main class="p-6">
+        <div class="flex justify-between items-end mb-4">
+            <h2 class="font-bold text-emerald-900 uppercase text-xs tracking-widest">Active Workstations (120 Nodes)</h2>
+            <p class="text-xs text-gray-500 italic">Values update in real-time. Acknowledge warnings with 'OK'.</p>
+        </div>
+        
+        <div class="scroll-container">
+            <div id="workstation-grid" class="dashboard-grid">
+                <!-- Dynamically Generated -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const grid = document.getElementById('workstation-grid');
+        const TOTAL_STATIONS = 120;
+        const stations = [];
+
+        // Initialize Stations
+        function initStations() {
+            for (let i = 1; i <= TOTAL_STATIONS; i++) {
+                const station = {
+                    id: i,
+                    name: `WS-${i.toString().padStart(3, '0')}`,
+                    temp: 280 + Math.random() * 10,
+                    pressure: 15.2 + Math.random() * 0.5,
+                    status: 'normal',
+                    acknowledged: true
+                };
+                stations.push(station);
+                createCard(station);
+            }
+        }
+
+        function createCard(station) {
+            const card = document.createElement('div');
+            card.id = `card-${station.id}`;
+            card.className = 'workstation-card';
+            updateCardUI(card, station);
+            grid.appendChild(card);
+        }
+
+        function updateCardUI(card, station) {
+            const statusClass = `status-${station.status}`;
+            const isWarning = station.status !== 'normal' && !station.acknowledged;
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-bold text-gray-400 mono">${station.name}</span>
+                    <span class="status-indicator ${statusClass}"></span>
+                </div>
+                <div class="mb-3">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-[10px] text-gray-500">TEMP</span>
+                        <span class="text-sm font-bold mono ${station.temp > 292 ? 'text-red-500' : 'text-emerald-800'}">${station.temp.toFixed(1)}°C</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] text-gray-500">PRES</span>
+                        <span class="text-sm font-bold mono text-emerald-800">${station.pressure.toFixed(2)} MPa</span>
+                    </div>
+                </div>
+                ${!station.acknowledged ? `
+                    <button onclick="acknowledge(${station.id})" class="w-full py-1 text-[10px] font-bold bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">
+                        OK
+                    </button>
+                ` : `
+                    <div class="w-full py-1 text-[10px] font-bold text-center text-emerald-300 border border-emerald-50 rounded">
+                        LOCKED
+                    </div>
+                `}
+            `;
+
+            if (isWarning) {
+                card.classList.add('border-yellow-400', 'bg-yellow-50');
+            } else {
+                card.classList.remove('border-yellow-400', 'bg-yellow-50');
+            }
+        }
+
+        function acknowledge(id) {
+            const station = stations.find(s => s.id === id);
+            if (station) {
+                station.acknowledged = true;
+                station.status = station.temp > 292 ? 'critical' : 'normal';
+                const card = document.getElementById(`card-${id}`);
+                updateCardUI(card, station);
+                updateGlobalStats();
+            }
+        }
+
+        // Live Simulation
+        function updateData() {
+            let activeAlerts = 0;
+            let sumTemp = 0;
+
+            stations.forEach(s => {
+                // Natural fluctuation
+                s.temp += (Math.random() - 0.5) * 0.8;
+                s.pressure += (Math.random() - 0.5) * 0.02;
+
+                // Randomly trigger warning (1% chance)
+                if (Math.random() > 0.99 && s.acknowledged) {
+                    s.status = 'warning';
+                    s.acknowledged = false;
+                    s.temp += 5; // Spike
+                }
+
+                // Auto-critical if temp too high
+                if (s.temp > 295) {
+                    s.status = 'critical';
+                } else if (s.temp < 290 && s.acknowledged) {
+                    s.status = 'normal';
+                }
+
+                if (!s.acknowledged) activeAlerts++;
+                sumTemp += s.temp;
+
+                const card = document.getElementById(`card-${s.id}`);
+                updateCardUI(card, s);
+            });
+
+            // Update Header Stats
+            document.getElementById('avg-temp').innerText = (sumTemp / TOTAL_STATIONS).toFixed(1) + '°C';
+            document.getElementById('alert-count').innerText = activeAlerts;
+            
+            const globalStatus = document.getElementById('global-status');
+            if (activeAlerts > 5) {
+                globalStatus.innerHTML = '<span class="status-indicator status-critical"></span> MULTIPLE WARNINGS';
+                globalStatus.className = 'bg-red-100 text-red-700 px-4 py-2 rounded-full font-bold flex items-center gap-2';
+            } else if (activeAlerts > 0) {
+                globalStatus.innerHTML = '<span class="status-indicator status-warning"></span> SYSTEM CAUTION';
+                globalStatus.className = 'bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold flex items-center gap-2';
+            } else {
+                globalStatus.innerHTML = '<span class="status-indicator status-normal"></span> SYSTEM NOMINAL';
+                globalStatus.className = 'bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-bold flex items-center gap-2';
+            }
+        }
+
+        // Clock logic
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
+        }
+
+        // Run
+        window.onload = () => {
+            initStations();
+            setInterval(updateData, 2000); // 2 second refresh for "Real-Time" feel
+            setInterval(updateClock, 1000);
+            updateClock();
+        };
+    </script>
 </body>
 </html>
