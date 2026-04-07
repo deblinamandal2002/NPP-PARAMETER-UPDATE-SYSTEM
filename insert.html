@@ -1,125 +1,751 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Insert values</title>
-        <style>
-            table ,th,td{
-                border:2px solid black;
-                border-collapse: collapse;
-            }
-            #tbl{
-                text-align: left;
-            }
-            #tbl2{
-                text-align: right;
-            }
-            .content {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: black; 
-            background-color: white;
-            }
-            img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            }
-            .content input[type="button"] {
-            margin-bottom: 3px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <img src="npcil_img2.jpg" alt="Your Image">
-            <div class="translucent-background"></div>
-            <div class="content">
-            <ul>
-                <li>
-                <h3>Enter the parameters for insertion in the table </h3>
-                <form method="POST" name="myform">
-                    Id:<input type="text" id="id" name="id" required><br>
-                    Name:<input type="text" id="name" name="name" required><br>
-                    High_alarm_value:<input type="text" id="high_alarm_value" name="high_alarm_value" required><br>
-                    Low_alarm_value:<input type="text" id="low_alarm_value" name="low_alarm_value" required><br>
-                    <input type="button" name="add" value="Insert Data " onclick="addParameters();"><hr>
-                    <table id="tbl" class="table">
-                    <h2>Dynamic table</h2>
-                    <thead>
-                        <th>id</th>
-                        <th>name</th>
-                        <th>high_alarm_value</th>
-                        <th>low_alarm_value</th>
-                    </thead>
-                    <tbody></tbody>
-                </table><hr>
-                <table id="tbl2" class="table">
-                    <h2>Static table</h2>
-                    <thead>
-                        <th>id</th>
-                        <th>name</th>
-                        <th>high_alarm_value</th>
-                        <th>low_alarm_value</th>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                </form>
-            </ul>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NPP Parameter Update System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-base:       #e8f5e9;
+      --bg-panel:      #f1faf2;
+      --bg-card:       #ffffff;
+      --border:        #a5d6a7;
+      --border-accent: #43a047;
+      --accent:        #2e7d32;
+      --accent-light:  #66bb6a;
+      --accent-glow:   rgba(46,125,50,0.18);
+      --text-primary:  #1b3a1e;
+      --text-secondary:#4a7c59;
+      --text-muted:    #7aab82;
+      --danger:        #c62828;
+      --danger-light:  #ffebee;
+      --success:       #1b5e20;
+      --warning:       #f57f17;
+      --header-bg:     #1b5e20;
+      --row-even:      #f0faf1;
+      --row-hover:     #c8e6c9;
+      --shadow:        0 4px 24px rgba(46,125,50,0.10);
+      --shadow-lg:     0 8px 40px rgba(46,125,50,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(102,187,106,0.13) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(46,125,50,0.09) 0%, transparent 50%),
+        repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(165,214,167,0.18) 40px),
+        repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(165,214,167,0.18) 40px);
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--header-bg);
+      color: #fff;
+      padding: 0 2rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      border: 2px solid rgba(255,255,255,0.3);
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%,100%{ box-shadow: 0 0 0 0 rgba(255,255,255,0.25); }
+      50%     { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+    }
+    .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; letter-spacing: .06em; }
+    .logo-sub  { font-family: 'Share Tech Mono', monospace; font-size: .68rem; opacity: .65; margin-top: 1px; letter-spacing: .1em; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .status-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem; letter-spacing: .08em;
+    }
+    .status-dot { width: 8px; height: 8px; background: #69f0ae; border-radius: 50%; animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+    #live-clock { font-family: 'Share Tech Mono', monospace; font-size: .8rem; opacity: .75; }
+
+    /* ── Layout ── */
+    main { max-width: 1140px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 1rem;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block; width: 3px; height: 16px;
+      background: var(--accent); border-radius: 2px;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .field-group { display: flex; flex-direction: column; gap: 5px; }
+    .field-group label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .78rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .field-group input {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .92rem;
+      color: var(--text-primary);
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .field-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .field-group input.invalid { border-color: var(--danger); background: var(--danger-light); }
+    .field-error { font-size: .72rem; color: var(--danger); min-height: 14px; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 20px;
+      border: none; border-radius: 6px; cursor: pointer;
+      font-family: 'Rajdhani', sans-serif; font-weight: 600;
+      font-size: .9rem; letter-spacing: .07em;
+      transition: transform .15s, box-shadow .15s, background .15s;
+      outline: none;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(46,125,50,0.25);
+    }
+    .btn-primary:hover { background: #388e3c; box-shadow: 0 4px 18px rgba(46,125,50,0.35); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid var(--border-accent);
+    }
+    .btn-secondary:hover { background: var(--accent-glow); }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #b71c1c; }
+    .btn-sm { padding: 5px 12px; font-size: .78rem; }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: .95rem;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(80px); opacity: 0;
+      transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      flex: 1; min-width: 140px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label { font-size: .75rem; color: var(--text-muted); margin-top: 4px; letter-spacing: .06em; }
+
+    /* ── Tables ── */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+    .table-header {
+      background: var(--header-bg);
+      padding: .9rem 1.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .table-header-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      color: #fff; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .table-badge {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .72rem;
+    }
+
+    .search-bar {
+      padding: .7rem 1rem;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .search-bar input {
+      flex: 1;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 5px;
+      padding: 6px 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .85rem;
+      outline: none;
+      color: var(--text-primary);
+    }
+    .search-bar input:focus { border-color: var(--accent); }
+
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: .88rem;
+    }
+    thead th {
+      background: #e8f5e9;
+      color: var(--text-secondary);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600; font-size: .78rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer; user-select: none;
+      white-space: nowrap;
+    }
+    thead th:hover { background: #c8e6c9; }
+    thead th .sort-icon { opacity: .4; font-size: .7rem; margin-left: 4px; }
+    thead th.sorted .sort-icon { opacity: 1; color: var(--accent); }
+
+    tbody tr {
+      border-bottom: 1px solid #e8f5e9;
+      transition: background .15s;
+    }
+    tbody tr:nth-child(even) { background: var(--row-even); }
+    tbody tr:hover { background: var(--row-hover); }
+    tbody td {
+      padding: 9px 14px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .85rem;
+      color: var(--text-primary);
+    }
+    tbody td.alarm-high { color: var(--danger); font-weight: 600; }
+    tbody td.alarm-low  { color: var(--warning); font-weight: 600; }
+
+    .action-cell { display: flex; gap: 6px; }
+    .no-data {
+      text-align: center; padding: 2.5rem;
+      color: var(--text-muted);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .85rem;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--danger);
+      border-radius: 10px;
+      padding: 2rem;
+      max-width: 420px; width: 90%;
+      box-shadow: var(--shadow-lg);
+      animation: modal-in .25s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes modal-in { from{ transform:scale(.9); opacity:0; } }
+    .modal h3 { font-family:'Rajdhani',sans-serif; font-size:1.1rem; font-weight:700; margin-bottom:.6rem; }
+    .modal p  { font-size:.9rem; color:var(--text-secondary); margin-bottom:1.4rem; }
+    .modal-btns { display:flex; gap:10px; justify-content:flex-end; }
+
+    /* ── Edit inline ── */
+    .edit-input {
+      width: 100%;
+      background: #e8f5e9;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: .85rem;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    /* ── Export bar ── */
+    .export-bar { display:flex; gap:8px; flex-wrap:wrap; padding: .7rem 1rem; background: var(--bg-panel); border-bottom: 1px solid var(--border); }
+
+    /* ── Empty state icon ── */
+    .empty-icon { font-size: 2rem; margin-bottom: .5rem; display: block; }
+
+    @media(max-width:600px){
+      header{ padding: 0 1rem; }
+      .form-grid{ grid-template-columns: 1fr; }
+      .stats-bar{ flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo-area">
+    <div class="logo-icon">⚛️</div>
+    <div>
+      <div class="logo-text">NPP Parameter Update System</div>
+      <div class="logo-sub">NUCLEAR POWER PLANT · CONTROL SYSTEMS</div>
     </div>
-                <script type="text/javascript">
-                    function addParameterDynamically(){
-                        var id=document.myform.id.value;
-                        var name=document.myform.name.value;
-                        var high_alarm_value=document.myform.high_alarm_value.value;
-                        var low_alarm_value=document.myform.low_alarm_value.value;
-                    var tr=document.createElement('tr');
-                    var td1=tr.appendChild(document.createElement('td'));
-                    var td2=tr.appendChild(document.createElement('td'));
-                    var td3=tr.appendChild(document.createElement('td'));
-                    var td4=tr.appendChild(document.createElement('td'));
-                    td1.innerHTML=id;
-                    td2.innerHTML=name;
-                    td3.innerHTML=high_alarm_value;
-                    td4.innerHTML=low_alarm_value;
-                    document.getElementById("tbl").getElementsByTagName('tbody')[0].appendChild(tr);
-                    var data={
-                        id:id,
-                        name:name,
-                        high_alarm_value:high_alarm_value,
-                        low_alarm_value:low_alarm_value
-                    }
-                    var existingData=JSON.parse(localStorage.getItem('tableData'))||[];
-                    existingData.push(data);
-                    localStorage.setItem('tableData',JSON.stringify(existingData));
-                }
-                function addParameterStatically(){
-                        var existingData=JSON.parse(localStorage.getItem('tableData'))||[];
-                        var tbody=document.getElementById('tbl2').getElementsByTagName('tbody')[0];
-                        existingData.forEach(function(item)
-                        {
-                            var tr=document.createElement('tr');
-                            var td1=tr.appendChild(document.createElement('td'));
-                            var td2=tr.appendChild(document.createElement('td'));
-                            var td3=tr.appendChild(document.createElement('td'));
-                            var td4=tr.appendChild(document.createElement('td'));
-                            td1.innerHTML=item.id;
-                            td2.innerHTML=item.name;
-                            td3.innerHTML=item.high_alarm_value;
-                            td4.innerHTML=item.low_alarm_value;
-                            tbody.appendChild(tr);
-                        });
-                    }
-                    function addParameters(){
-                        addParameterDynamically();
-                        addParameterStatically();
-                    }
-                window.onload = function () {
-            addParameters();
-        };
-        </script>
-    </body>
+  </div>
+  <div class="header-right">
+    <div class="status-chip"><span class="status-dot"></span>SYSTEM ONLINE</div>
+    <div id="live-clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- Toast -->
+<div id="toast">✔ Record inserted successfully</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>⚠ Confirm Deletion</h3>
+    <p>Are you sure you want to permanently delete this parameter record? This action cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete Record</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-total">0</div>
+      <div class="stat-label">TOTAL PARAMETERS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-high" style="color:var(--danger)">0</div>
+      <div class="stat-label">HIGH ALARM TRIGGERED</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-low" style="color:var(--warning)">0</div>
+      <div class="stat-label">LOW ALARM TRIGGERED</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-normal" style="color:var(--success)">0</div>
+      <div class="stat-label">NORMAL STATUS</div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="section-title">Parameter Entry</div>
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="field-group">
+        <label for="f-id">Parameter ID</label>
+        <input type="text" id="f-id" placeholder="e.g. P-001" autocomplete="off"/>
+        <div class="field-error" id="err-id"></div>
+      </div>
+      <div class="field-group">
+        <label for="f-name">Parameter Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Core Temperature" autocomplete="off"/>
+        <div class="field-error" id="err-name"></div>
+      </div>
+      <div class="field-group">
+        <label for="f-high">High Alarm Value</label>
+        <input type="number" id="f-high" placeholder="e.g. 350" step="any"/>
+        <div class="field-error" id="err-high"></div>
+      </div>
+      <div class="field-group">
+        <label for="f-low">Low Alarm Value</label>
+        <input type="number" id="f-low" placeholder="e.g. 50" step="any"/>
+        <div class="field-error" id="err-low"></div>
+      </div>
+      <div class="field-group">
+        <label for="f-unit">Unit</label>
+        <input type="text" id="f-unit" placeholder="e.g. °C / bar / m³/h"/>
+        <div class="field-error"></div>
+      </div>
+      <div class="field-group">
+        <label for="f-current">Current Value (optional)</label>
+        <input type="number" id="f-current" placeholder="e.g. 200" step="any"/>
+        <div class="field-error"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="insertRecord()">＋ Insert Parameter</button>
+      <button class="btn btn-secondary" onclick="clearForm()">✕ Clear</button>
+    </div>
+  </div>
+
+  <!-- Dynamic Table -->
+  <div class="section-title">Live Parameter Table</div>
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-header-title">⚡ Dynamic Record View</div>
+      <div class="table-badge" id="badge-dyn">0 records</div>
+    </div>
+    <div class="search-bar">
+      <span style="color:var(--text-muted);font-size:.85rem;">🔍</span>
+      <input type="text" id="search-dyn" placeholder="Search by ID or Name…" oninput="renderDynamic()"/>
+    </div>
+    <div class="export-bar">
+      <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('id')" data-col="id">ID <span class="sort-icon">▲</span></th>
+            <th onclick="sortBy('name')" data-col="name">Name <span class="sort-icon">▲</span></th>
+            <th onclick="sortBy('high_alarm_value')" data-col="high_alarm_value">High Alarm <span class="sort-icon">▲</span></th>
+            <th onclick="sortBy('low_alarm_value')" data-col="low_alarm_value">Low Alarm <span class="sort-icon">▲</span></th>
+            <th>Unit</th>
+            <th onclick="sortBy('current_value')" data-col="current_value">Current Value <span class="sort-icon">▲</span></th>
+            <th>Status</th>
+            <th>Timestamp</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-dyn"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Static / Saved Table -->
+  <div class="section-title">Persisted Parameter Archive</div>
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-header-title">🗄 Saved Data Archive</div>
+      <div class="table-badge" id="badge-static">0 records</div>
+    </div>
+    <div class="search-bar">
+      <span style="color:var(--text-muted);font-size:.85rem;">🔍</span>
+      <input type="text" id="search-static" placeholder="Search archive…" oninput="renderStatic()"/>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>High Alarm</th><th>Low Alarm</th>
+            <th>Unit</th><th>Current Value</th><th>Status</th><th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-static"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ── State ── */
+let records = JSON.parse(localStorage.getItem('npp_records') || '[]');
+let sortCol = 'id';
+let sortAsc = true;
+let pendingDeleteId = null;
+let editingId = null;
+
+/* ── Clock ── */
+function updateClock(){
+  document.getElementById('live-clock').textContent =
+    new Date().toLocaleTimeString('en-IN',{hour12:false});
+}
+setInterval(updateClock, 1000); updateClock();
+
+/* ── Save ── */
+function save(){ localStorage.setItem('npp_records', JSON.stringify(records)); }
+
+/* ── Validation ── */
+function validate(){
+  let ok = true;
+  const id    = document.getElementById('f-id').value.trim();
+  const name  = document.getElementById('f-name').value.trim();
+  const high  = document.getElementById('f-high').value.trim();
+  const low   = document.getElementById('f-low').value.trim();
+
+  function setErr(fid, eid, msg){ 
+    document.getElementById(fid).classList.toggle('invalid', !!msg);
+    document.getElementById(eid).textContent = msg;
+  }
+
+  setErr('f-id','err-id', !id ? 'ID is required.' : (records.find(r=>r.id===id && r.id!==editingId)?'ID already exists.':''));
+  setErr('f-name','err-name', !name ? 'Name is required.' : '');
+  setErr('f-high','err-high', !high ? 'High alarm required.' : '');
+  setErr('f-low','err-low',   !low  ? 'Low alarm required.'  :
+    (parseFloat(low) >= parseFloat(high) ? 'Low must be less than High.' : ''));
+
+  document.querySelectorAll('.field-error').forEach(e=>{ if(e.textContent) ok=false; });
+  return ok;
+}
+
+/* ── Alarm status ── */
+function getStatus(r){
+  const cv = parseFloat(r.current_value);
+  if(isNaN(cv)) return {label:'N/A', cls:'', chip:'⬜'};
+  if(cv >= parseFloat(r.high_alarm_value)) return {label:'HIGH ALARM', cls:'alarm-high', chip:'🔴'};
+  if(cv <= parseFloat(r.low_alarm_value))  return {label:'LOW ALARM',  cls:'alarm-low',  chip:'🟡'};
+  return {label:'NORMAL', cls:'', chip:'🟢'};
+}
+
+/* ── Insert ── */
+function insertRecord(){
+  if(!validate()) return;
+  const rec = {
+    id:               document.getElementById('f-id').value.trim(),
+    name:             document.getElementById('f-name').value.trim(),
+    high_alarm_value: document.getElementById('f-high').value.trim(),
+    low_alarm_value:  document.getElementById('f-low').value.trim(),
+    unit:             document.getElementById('f-unit').value.trim() || '—',
+    current_value:    document.getElementById('f-current').value.trim(),
+    timestamp:        new Date().toLocaleString('en-IN'),
+  };
+  records.push(rec);
+  save();
+  clearForm();
+  render();
+  showToast('✔ Parameter ' + rec.id + ' inserted');
+}
+
+/* ── Clear form ── */
+function clearForm(){
+  ['f-id','f-name','f-high','f-low','f-unit','f-current'].forEach(id=>{
+    document.getElementById(id).value='';
+    document.getElementById(id).classList.remove('invalid');
+  });
+  ['err-id','err-name','err-high','err-low'].forEach(id=>document.getElementById(id).textContent='');
+  editingId = null;
+}
+
+/* ── Sort ── */
+function sortBy(col){
+  if(sortCol===col) sortAsc=!sortAsc; else { sortCol=col; sortAsc=true; }
+  document.querySelectorAll('thead th[data-col]').forEach(th=>{
+    th.classList.toggle('sorted', th.dataset.col===col);
+    const ic = th.querySelector('.sort-icon');
+    if(th.dataset.col===col) ic.textContent = sortAsc?'▲':'▼';
+    else ic.textContent='▲';
+  });
+  renderDynamic();
+}
+
+/* ── Filter ── */
+function filtered(q){
+  const ql = q.toLowerCase();
+  return records.filter(r=>r.id.toLowerCase().includes(ql)||r.name.toLowerCase().includes(ql));
+}
+
+/* ── Render Dynamic ── */
+function renderDynamic(){
+  const q = document.getElementById('search-dyn').value;
+  let data = filtered(q).slice();
+  data.sort((a,b)=>{
+    let av=a[sortCol]||'', bv=b[sortCol]||'';
+    if(!isNaN(av)&&!isNaN(bv)){ av=parseFloat(av); bv=parseFloat(bv); }
+    else { av=av.toString().toLowerCase(); bv=bv.toString().toLowerCase(); }
+    return sortAsc ? (av>bv?1:av<bv?-1:0) : (av<bv?1:av>bv?-1:0);
+  });
+
+  const tbody = document.getElementById('tbody-dyn');
+  if(!data.length){
+    tbody.innerHTML=`<tr><td colspan="9" class="no-data"><span class="empty-icon">📋</span>No parameters found.</td></tr>`;
+    document.getElementById('badge-dyn').textContent='0 records';
+    return;
+  }
+  document.getElementById('badge-dyn').textContent = data.length+' record'+(data.length!==1?'s':'');
+
+  tbody.innerHTML = data.map(r=>{
+    const st = getStatus(r);
+    return `<tr>
+      <td>${esc(r.id)}</td>
+      <td>${esc(r.name)}</td>
+      <td class="alarm-high">${esc(r.high_alarm_value)}</td>
+      <td class="alarm-low">${esc(r.low_alarm_value)}</td>
+      <td>${esc(r.unit)}</td>
+      <td>${r.current_value!==''?esc(r.current_value):'—'}</td>
+      <td>${st.chip} <span class="${st.cls}">${st.label}</span></td>
+      <td style="font-size:.75rem;color:var(--text-muted)">${esc(r.timestamp)}</td>
+      <td>
+        <div class="action-cell">
+          <button class="btn btn-secondary btn-sm" onclick="editRecord('${esc(r.id)}')">✏ Edit</button>
+          <button class="btn btn-danger btn-sm"    onclick="askDelete('${esc(r.id)}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── Render Static ── */
+function renderStatic(){
+  const q = document.getElementById('search-static').value;
+  const data = filtered(q);
+  const tbody = document.getElementById('tbody-static');
+  document.getElementById('badge-static').textContent = data.length+' record'+(data.length!==1?'s':'');
+
+  if(!data.length){
+    tbody.innerHTML=`<tr><td colspan="8" class="no-data"><span class="empty-icon">🗄</span>Archive is empty.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(r=>{
+    const st = getStatus(r);
+    return `<tr>
+      <td>${esc(r.id)}</td>
+      <td>${esc(r.name)}</td>
+      <td class="alarm-high">${esc(r.high_alarm_value)}</td>
+      <td class="alarm-low">${esc(r.low_alarm_value)}</td>
+      <td>${esc(r.unit)}</td>
+      <td>${r.current_value!==''?esc(r.current_value):'—'}</td>
+      <td>${st.chip} <span class="${st.cls}">${st.label}</span></td>
+      <td style="font-size:.75rem;color:var(--text-muted)">${esc(r.timestamp)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── Stats ── */
+function updateStats(){
+  document.getElementById('stat-total').textContent = records.length;
+  let high=0,low=0,normal=0;
+  records.forEach(r=>{
+    const st=getStatus(r).label;
+    if(st==='HIGH ALARM') high++;
+    else if(st==='LOW ALARM') low++;
+    else if(st==='NORMAL') normal++;
+  });
+  document.getElementById('stat-high').textContent=high;
+  document.getElementById('stat-low').textContent=low;
+  document.getElementById('stat-normal').textContent=normal;
+}
+
+/* ── Render all ── */
+function render(){ renderDynamic(); renderStatic(); updateStats(); }
+
+/* ── Edit ── */
+function editRecord(id){
+  const r = records.find(r=>r.id===id); if(!r) return;
+  editingId = id;
+  document.getElementById('f-id').value   = r.id;
+  document.getElementById('f-name').value = r.name;
+  document.getElementById('f-high').value = r.high_alarm_value;
+  document.getElementById('f-low').value  = r.low_alarm_value;
+  document.getElementById('f-unit').value = r.unit==='—'?'':r.unit;
+  document.getElementById('f-current').value = r.current_value||'';
+  // Remove old record, re-insert on submit
+  records = records.filter(x=>x.id!==id);
+  save(); render();
+  document.getElementById('f-id').focus();
+  showToast('✏ Editing record '+id+' — update and re-insert');
+}
+
+/* ── Delete ── */
+function askDelete(id){ pendingDeleteId=id; document.getElementById('deleteModal').classList.add('open'); }
+function closeDeleteModal(){ document.getElementById('deleteModal').classList.remove('open'); pendingDeleteId=null; }
+function confirmDelete(){
+  records = records.filter(r=>r.id!==pendingDeleteId);
+  save(); render(); closeDeleteModal();
+  showToast('🗑 Record deleted');
+}
+
+/* ── Clear all ── */
+function clearAll(){
+  if(!confirm('Clear ALL parameter records? This cannot be undone.')) return;
+  records=[]; save(); render();
+  showToast('All records cleared');
+}
+
+/* ── CSV Export ── */
+function exportCSV(){
+  if(!records.length){ showToast('No data to export'); return; }
+  const header = ['ID','Name','High Alarm','Low Alarm','Unit','Current Value','Status','Timestamp'];
+  const rows = records.map(r=>[r.id,r.name,r.high_alarm_value,r.low_alarm_value,r.unit,r.current_value||'',getStatus(r).label,r.timestamp].map(v=>`"${v}"`).join(','));
+  const csv = [header.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='npp_parameters_'+Date.now()+'.csv';
+  a.click();
+  showToast('⬇ CSV exported');
+}
+
+/* ── Toast ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ── Escape HTML ── */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ── Init ── */
+window.onload = render;
+</script>
+</body>
 </html>
