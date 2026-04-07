@@ -3,14 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuclear Power Plant </title>
-    <link rel="stylesheet" href="npp_para.css">
+    <title>Global NPP Monitoring Command</title>
+    <style>
+        :root {
+            --bg-base: #f0fdf4; /* Light light greenish */
+            --header-bg: #166534;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #dcfce7;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
+            /* Subtle greenish texture using SVG pattern */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48 0l7 7-1.414 1.414L46.586 1.414 48 0zm-36 0L5 7l1.414 1.414L13.414 1.414 12 0zM0 54.627l.828.83 1.415-1.415L0 51.8v2.827zM0 5.373l.828-.83L2.243 5.96 0 8.2V5.374zM0 48l7 7 1.414-1.414L1.414 46.586 0 48zM0 12l7-7 1.414 1.414L1.414 13.414 0 12zM54.627 60l.83-.828-1.415-1.415L51.8 60h2.827zM5.373 60l-.83-.828L5.96 57.757 8.2 60H5.374zM48 60l7-7-1.414-1.414L46.586 58.586 48 60zm-36 0L5 53l1.414-1.414L13.414 58.586 12 60zM60 54.627l-.828.83-1.415-1.415L60 51.8v2.827zM60 5.373l-.828-.83-1.415 1.415L60 8.2V5.374zM60 48l-7 7-1.414-1.414L58.586 46.586 60 48zM60 12l-7-7-1.414 1.414L58.586 13.414 60 12z' fill='%2316a34a' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .top-bar {
+            background: var(--header-bg);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-item {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .summary-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 0.6rem 1rem;
+            border-radius: 0.4rem;
+            border: 1px solid var(--border);
+            width: 300px;
+            outline: none;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .station-card {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .station-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .status-strip {
+            height: 4px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .station-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .data-label { color: var(--text-muted); }
+        .data-value { font-family: monospace; font-weight: 600; }
+
+        /* Severity Classes */
+        .bg-ok { background-color: var(--success); }
+        .bg-warn { background-color: var(--warning); }
+        .bg-crit { background-color: var(--danger); }
+        
+        .text-ok { color: var(--success); }
+        .text-warn { color: var(--warning); }
+        .text-crit { color: var(--danger); }
+
+        @media (max-width: 768px) {
+            .stats-summary { grid-template-columns: repeat(2, 1fr); }
+            .search-input { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Nuclear Power Plant </h1>
-        <div id="parameters"></div>
+    <div class="top-bar">
+        <div>
+            <h2 style="margin:0; font-size: 1.2rem;">GLOBAL NPP COMMAND CENTER</h2>
+            <small style="opacity: 0.8">Real-time Concurrent Monitoring Assets</small>
+        </div>
+        <div id="clock" style="font-family: monospace; font-size: 1.1rem;"></div>
     </div>
-    <script src="npp_para.js"></script>
+
+    <div class="stats-summary">
+        <div class="summary-item">
+            <span class="summary-label">Total Stations</span>
+            <span class="summary-val" id="total-stations">120</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Active Power Gen</span>
+            <span class="summary-val" id="total-power">0 GW</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">System Health</span>
+            <span class="summary-val text-ok" id="system-health">98.2%</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Critical Alerts</span>
+            <span class="summary-val text-crit" id="active-alerts">0</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="controls">
+            <input type="text" id="search" class="search-input" placeholder="Search station ID or location...">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Showing all active nodes</span>
+        </div>
+        
+        <div class="grid-container" id="grid">
+            <!-- 120 Stations injected here -->
+        </div>
+    </div>
+
+    <script>
+        const stationCount = 120;
+        let stations = [];
+        const regions = ['NA', 'EU', 'AS', 'SA', 'AF', 'OC'];
+
+        // Initialize 120 stations
+        function initData() {
+            for (let i = 1; i <= stationCount; i++) {
+                stations.push({
+                    id: `NPP-${String(i).padStart(3, '0')}`,
+                    location: regions[Math.floor(Math.random() * regions.length)] + '-' + (100 + i),
+                    power: 2000 + Math.random() * 1000,
+                    temp: 290 + Math.random() * 40,
+                    pressure: 14.5 + Math.random() * 2,
+                    status: 'ok'
+                });
+            }
+        }
+
+        function getSeverity(s) {
+            if (s.temp > 325 || s.pressure > 16.2) return 'crit';
+            if (s.temp > 318 || s.pressure > 15.8) return 'warn';
+            return 'ok';
+        }
+
+        function renderGrid(filter = '') {
+            const grid = document.getElementById('grid');
+            const filtered = stations.filter(s => 
+                s.id.toLowerCase().includes(filter.toLowerCase()) || 
+                s.location.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            grid.innerHTML = filtered.map(s => {
+                const sev = getSeverity(s);
+                return `
+                    <div class="station-card">
+                        <div class="status-strip bg-${sev}"></div>
+                        <span class="station-name">${s.id}</span>
+                        <div class="data-row">
+                            <span class="data-label">Loc:</span>
+                            <span class="data-value">${s.location}</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Pwr:</span>
+                            <span class="data-value">${(s.power / 1000).toFixed(2)} GW</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Temp:</span>
+                            <span class="data-value ${sev !== 'ok' ? 'text-' + sev : ''}">${s.temp.toFixed(1)}°C</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Pres:</span>
+                            <span class="data-value">${s.pressure.toFixed(2)} MPa</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Update Summary
+            const totalPower = filtered.reduce((acc, s) => acc + s.power, 0) / 1000;
+            const alerts = filtered.filter(s => getSeverity(s) === 'crit').length;
+            
+            document.getElementById('total-power').innerText = totalPower.toFixed(1) + ' GW';
+            document.getElementById('active-alerts').innerText = alerts;
+            document.getElementById('total-stations').innerText = filtered.length;
+        }
+
+        function updateData() {
+            stations.forEach(s => {
+                // Random drift
+                s.power += (Math.random() - 0.5) * 10;
+                s.temp += (Math.random() - 0.5) * 2;
+                s.pressure += (Math.random() - 0.5) * 0.1;
+                
+                // Keep within realistic bounds
+                if(s.temp < 280) s.temp = 280;
+                if(s.temp > 340) s.temp = 335; 
+            });
+            renderGrid(document.getElementById('search').value);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toUTCString().replace('GMT', 'UTC');
+        }
+
+        window.onload = () => {
+            initData();
+            renderGrid();
+            setInterval(updateData, 3000);
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            document.getElementById('search').addEventListener('input', (e) => {
+                renderGrid(e.target.value);
+            });
+        };
+    </script>
 </body>
 </html>
